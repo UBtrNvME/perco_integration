@@ -6,7 +6,7 @@ from odoo.http import request
 
 class AttendanceController(http.Controller):
 
-    @http.route(['/api/v1/createAttendance/<string:employeeName>'], type="http", auth="public", method=['POST'],
+    @http.route(['/api/v1/createAttendance'], type="http", auth="public", method=['POST'],
                 csrf=False)
     def createAttendace(self, employeeName):
         values = {}
@@ -26,12 +26,12 @@ class AttendanceController(http.Controller):
 
         return json.dumps(values)
 
-    @http.route(['/api/v1/finishAttendance/<string:employeeName>'], type="http", auth="public", method=['POST'],
+    @http.route(['/api/v1/finishAttendance'], type="http", auth="public", method=['POST'],
                 csrf=False)
     def finishAttendance(self, employeeName):
         from odoo import fields
         values = {}
-        attendance = request.env['hr.attendance'].sudo().search([['employee_id.name', '=', employeeName]])
+        attendance = request.env['hr.attendance'].sudo().search([['employee_id.name', '=', employeeName]], limit=1)
         if attendance.id:
             res = attendance.write({'check_out': fields.Datetime.now()})
             values['success'] = True

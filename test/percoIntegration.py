@@ -1,4 +1,5 @@
 import requests
+import time
 
 #
 # url = "http://ru.percoweb.com"
@@ -9,10 +10,17 @@ import requests
 # # response = requests.get(url="http://127.0.0.1/api/users/staff/table", params=params)
 # # print(response.json())
 
-url = "localhost:8383/api/v1"
+url = "https://pasport.qzhub.com/api/v1"
 i = 0
-employee = "Aitemir%20Kuandyk"
+employee = "Marc%20Demo"
+headers = {
+    'Content-Type': 'application/json'
+}
 while i < 1:
-    requests.post(url=url + "/createAttendance/" + employee)
-    requests.post(url=url + "/finishAttendance/" + employee)
+    response = False
+    response = requests.post(url=url + "/createAttendance/" + employee)
+    print(response.reason)
+    time.sleep(1)
+    response = requests.post(url=url + "/finishAttendance/" + employee)
     i += 1
+    print(response.reason)
