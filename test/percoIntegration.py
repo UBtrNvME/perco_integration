@@ -11,16 +11,16 @@ import time
 # # print(response.json())
 
 # url = "https://pasport.qzhub.com/api/v1"
-url = "http://localhost:8383/api/v1"
+url = "https://pasport.qzhub.com/api/v1"
 i = 0
 employee = "Marc%20Demo"
 headers = {
     'Content-Type': 'message/http'
 }
 params = {
-    "employeeName": "Aitemir Kuandyk"
+    "employeeName": "Mitchell Admin"
 }
-while i < 1:
+while i < 2:
     response = False
     response = requests.post(url=url + "/createAttendance", headers=headers, params=params)
     print(response.url)
