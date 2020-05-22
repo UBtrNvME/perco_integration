@@ -15,16 +15,16 @@ url = "http://localhost:8383/api/v1"
 i = 0
 employee = "Marc%20Demo"
 headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'message/http'
 }
 params = {
-    "employeeName": "Marc Demo"
+    "employeeName": "Aitemir Kuandyk"
 }
 while i < 1:
     response = False
     response = requests.post(url=url + "/createAttendance", headers=headers, params=params)
     print(response.url)
-    time.sleep(1)
     response = requests.post(url=url + "/finishAttendance", headers=headers, params=params)
     i += 1
     print(response.reason)
+
