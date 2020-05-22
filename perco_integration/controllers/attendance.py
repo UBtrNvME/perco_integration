@@ -6,7 +6,7 @@ from odoo.http import request
 
 class AttendanceController(http.Controller):
 
-    @http.route(['/api/v1/createAttendance'], type="http", auth="public", method=['POST'],
+    @http.route(['/api/v1/createAttendance'], type="json", auth="public", method=['POST'],
                 csrf=False)
     def createAttendace(self, employeeName):
         values = {}
@@ -26,7 +26,7 @@ class AttendanceController(http.Controller):
 
         return json.dumps(values)
 
-    @http.route(['/api/v1/finishAttendance'], type="http", auth="public", method=['POST'],
+    @http.route(['/api/v1/finishAttendance'], type="json", auth="public", method=['POST'],
                 csrf=False)
     def finishAttendance(self, employeeName):
         from odoo import fields

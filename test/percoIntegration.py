@@ -10,17 +10,21 @@ import time
 # # response = requests.get(url="http://127.0.0.1/api/users/staff/table", params=params)
 # # print(response.json())
 
-url = "https://pasport.qzhub.com/api/v1"
+# url = "https://pasport.qzhub.com/api/v1"
+url = "http://localhost:8383/api/v1"
 i = 0
 employee = "Marc%20Demo"
 headers = {
     'Content-Type': 'application/json'
 }
+params = {
+    "employeeName": "Marc Demo"
+}
 while i < 1:
     response = False
-    response = requests.post(url=url + "/createAttendance/" + employee)
-    print(response.reason)
+    response = requests.post(url=url + "/createAttendance", headers=headers, params=params)
+    print(response.url)
     time.sleep(1)
-    response = requests.post(url=url + "/finishAttendance/" + employee)
+    response = requests.post(url=url + "/finishAttendance", headers=headers, params=params)
     i += 1
     print(response.reason)
