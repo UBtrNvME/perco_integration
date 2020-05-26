@@ -1,7 +1,7 @@
 import os, sys
 
 sys.path.append(os.getcwd())
-import RPCRequest
+import RPCRequest as req
 from datetime import datetime
 
 url = "https://pasport.qzhub.com"
@@ -15,7 +15,7 @@ class AttendanceSystem:
     def __init__(self, url, db, username, password):
         self.attendance_ids = {}
         self.employee_ids = {}
-        self.rpc = RPCRequest(url, db, username, password)
+        self.rpc = req.RPCRequest(url, db, username, password)
         self.rpc.getReady()
 
     def createAttendance(self, name):
@@ -29,12 +29,12 @@ class AttendanceSystem:
 
     def finishAttendance(self, name):
         attendance_id = self.getAttendanceId(name=name)
-        checkOutTime = datetime.now().replace(microsecond=0)
+        checkOutTime = datetime.utcnow().replace(microsecond=0)
 
         data = {
             'check_out': str(checkOutTime)
         }
-        self.rpc.updaterecord(model='hr.attendance', id=attendance_id, data=data)
+        self.rpc.updateRecord(model='hr.attendance', id=attendance_id, data=data)
         self.deleteAttendanceId(name=name)
 
     def pushToEmployeeIds(self, name, id):
@@ -52,7 +52,7 @@ class AttendanceSystem:
             return self.employee_ids[name]
 
         def _getFromOdoo(name):
-            return self.rpc.searchRecord(model=MODEL, domain=[['name', '=', name]])
+            return self.rpc.searchRecord(model=MODEL, domain=[['name', '=', name]])[0]
 
         if name in self.employee_ids:
             return _getFromDictionary(name)
@@ -66,7 +66,7 @@ class AttendanceSystem:
             return self.employee_ids[name]
 
         def _getFromOdoo(name):
-            return self.rpc.searchRecord(model=MODEL, domain=[['employee_id.name', '=', name]])
+            return self.rpc.searchRecord(model=MODEL, domain=[['employee_id.name', '=', name]])[0]
 
         if name in self.attendance_ids:
             return _getFromDictionary(name)
@@ -74,4 +74,12 @@ class AttendanceSystem:
             return _getFromOdoo(name)
 
     def deleteAttendanceId(self, name):
-        self.attendance_ids.pop(name)
+        if name in self.attendance_ids:
+            self.attendance_ids.pop(name)
+    #
+    # def getTimeNow(self):
+    #     pass
+    #
+    # def getTimeZoneDifference(self):
+    #
+    #     return

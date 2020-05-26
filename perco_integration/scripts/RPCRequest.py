@@ -25,7 +25,7 @@ class RPCRequest:
             raise Exception("Route is not set")
         return self.models.execute_kw(self.db, self.uid, self.password, model, 'check_access_rights', types,
                                       {'raise_exception': False})
-    
+
     def createRecord(self, model, data):
         array = [data]
         if self.models == None:

@@ -1,2 +1,2 @@
-from . import (AttendanceSystem,
-               RPCRequest)
+from .AttendanceSystem import AttendanceSystem
+from .RPCRequest import RPCRequest
