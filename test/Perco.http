@@ -1,8 +1,0 @@
-GET http://127.0.0.1/api/users/staff/table
-Content-Type: application/json
-
-{"token": "73e48IB68MwOktCFgIlwpKIT95vU68CJ", "status":  "active"}
-
-###
-#-d "\"token\":\"73e48IB68MwOktCFgIlwpKIT95vU68CJ\",\"status\":\"active\"
-
