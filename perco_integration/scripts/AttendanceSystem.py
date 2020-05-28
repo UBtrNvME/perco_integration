@@ -76,10 +76,3 @@ class AttendanceSystem:
     def deleteAttendanceId(self, name):
         if name in self.attendance_ids:
             self.attendance_ids.pop(name)
-    #
-    # def getTimeNow(self):
-    #     pass
-    #
-    # def getTimeZoneDifference(self):
-    #
-    #     return
