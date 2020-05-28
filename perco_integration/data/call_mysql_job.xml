@@ -9,10 +9,10 @@
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="doall">0</field>
-            <field name="nextcall">09:01:00</field>
-            <field name="model_id" ref="model_perco_integration_attendance"/>
+            <field name="nextcall">2020-05-19 09:01:00</field>
+            <field name="model_id" ref="model_mysql_connector"/>
             <field name="state">code</field>
-            <field name="code">model.call_mysql()</field>
+            <field name="code">model.import_from_db()</field>
         </record>
     </data>
 </odoo>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mysql_connector_form_view" model="ir.ui.view">
+        <field name="name">mysql.connector.form</field>
+        <field name="model">mysql.connector</field>
+        <field name="arch" type="xml">
+            <form string="Connector">
+                <sheet>
+                    <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        <button  class="oe_stat_button" name="establish_connection" type="object" icon="fa-file-text-o">
+                        </button>
+                    </div>
+                    <group>
+                        <field name="host"/>
+                        <field name="port"/>
+                        <field name="database"/>
+                        <field name="username"/>
+                        <field name="password"/>
+                        <field name="query"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="mysql_connector_view_tree" model="ir.ui.view">
+        <field name="name">mysql_connector_view_tree</field>
+        <field name="model">mysql.connector</field>
+        <field name="arch" type="xml">
+            <tree string="mysql_connector_tree">
+                <field name="host"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="mysql_connector_act_window" model="ir.actions.act_window">
+        <field name="name">Connector</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mysql.connector</field>
+<!--        <field name="binding_view_types">form</field>-->
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                There is no examples click here to add new ModelTitle.
+            </p>
+        </field>
+    </record>
+    <menuitem name="Connectors" id="mysql_connector_menu"
+              parent="hr_attendance.menu_hr_attendance_manage_attendances" action="mysql_connector_act_window"/>
+
+</odoo>
