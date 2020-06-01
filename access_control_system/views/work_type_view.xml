@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="acs_work_type_form_view" model="ir.ui.view">
+            <field name="name">[FORM VIEW] Access Control System: Work Type</field>
+            <field name="model">acs.work.type</field>
+            <field name="arch" type="xml">
+                <form string="Work Type">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Title"/>
+                            </h1>
+                        </div>
+                        <!--<group>
+                            <group>
+                                <field name="type"/>
+                            </group>
+                            <group>
+                                <field name="controller_id"/>
+                            </group>
+                        </group>-->
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="acs_work_type_tree_view" model="ir.ui.view">
+            <field name="name">[TREE VIEW] Access Control System: Work Type</field>
+            <field name="model">acs.work.type</field>
+            <field name="arch" type="xml">
+                <tree string="Work Type">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+<!--        <record id="acs_controllers_readers_search_view" model="ir.ui.view">-->
+<!--            <field name="name">access.acs_controllers_readers.search</field>-->
+<!--            <field name="model">access.acs_controllers_readers</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <search string="ModelTitle">-->
+<!--                    <group expand="1" string="Group By">-->
+<!--                        <filter string="Example Field" name="example_field" domain="[]"-->
+<!--                                context="{'group_by':'example_field'}"/>-->
+<!--                    </group>-->
+<!--                </search>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record id="acs_work_type_act_window" model="ir.actions.act_window">
+            <field name="name">[ACTION] Access Control System: Work Type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">acs.work.type</field>
+            <field name="binding_view_types">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no examples click here to add new ModelTitle.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
