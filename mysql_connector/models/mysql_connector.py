@@ -4,7 +4,7 @@ import datetime
 from mysql.connector import Error
 
 
-class MysqlConnector(models.Model):
+class MysqlConnector(models.AbstractModel):
     _name = "mysql.connector"
     host = fields.Char(string="Host address")
     database = fields.Char(string="Database name")
@@ -13,8 +13,8 @@ class MysqlConnector(models.Model):
     password = fields.Char(string="User password")
     connection = None
     cursor = None
-    query = fields.Char(string="Query")
-    model_name = fields.Char(string="Model name")
+
+
 
     def establish_connection(self):
         self.connection = mysql.connector.connect(host=self.host,
@@ -24,16 +24,10 @@ class MysqlConnector(models.Model):
                                                   port=self.port)
         self.cursor = self.connection.cursor()
 
-    def execute_query(self):
-        self.cursor.execute(self.query)
+    def execute_query(self, query):
+        self.cursor.execute(self.query + self.generate_query_body_for_event())
         records = self.cursor.fetchall()
         return records
-
-
-class MysqlConnectorAttendance(models.Model):
-    _inherit = "mysql.connector"
-    _name = "mysql.connector.attendance"
-
 
     def generate_query_body_for_event(self):
         def _get_time_domain_for_event(delta_hours):
@@ -48,10 +42,11 @@ class MysqlConnectorAttendance(models.Model):
                 " LEFT JOIN user_card uc USING(identifier)" \
                 " LEFT JOIN user u ON e.user_id = u.id"
 
-        return QUERY + _get_time_domain_for_event(3)
+        return _get_time_domain_for_event(40)
 
     def create_attendance(self, data):
-        self.env['hr.attendance'].create(data)
+        print("nigger")
+        # self.env['hr.attendance'].create(data)
 
     def search_employee_ids(self):
         employees = self.env['hr.employee'].search([])
@@ -60,10 +55,14 @@ class MysqlConnectorAttendance(models.Model):
             employee_ids[employee.name] = employee.id
         return employee_ids
 
+    @api.one
     def import_from_db(self):
+        self.establish_connection()
         records = self.execute_query()
         employee_ids = self.search_employee_ids()
+        print("nigger")
         for record in records:
+            print(record)
             employee_name = record[0] + " " + record[1]
             try:
                 employee_id = employee_ids[employee_name]
@@ -73,4 +72,7 @@ class MysqlConnectorAttendance(models.Model):
             data = {
                 "employee_id": employee_id
             }
+            print(data)
             self.create_attendance(data)
+        self.cursor.close()
+        self.connection.close()

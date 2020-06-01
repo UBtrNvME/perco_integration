@@ -1,3 +1,3 @@
 from .AttendanceSystem import AttendanceSystem
 from .RPCRequest import RPCRequest
-# from .test import MysqlConnector
+from .mysql_connector import mysql_connector

@@ -28,7 +28,7 @@
 #         cursor.close()
 #         print("MySQL connection is closed")
 
-import test
-mysql = test.MysqlConnector()
+import mysql_connector
+mysql = mysql_connector.MysqlConnector()
 mysql.establish_connection()
 print(mysql.execute_query(mysql.generate_query_body_for_event()))
