@@ -6,17 +6,23 @@
         <field name="arch" type="xml">
             <form string="Connector">
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Title" readonly="1"/>
+                        </h1>
+                    </div>
+                    <!--<div class="oe_button_box" name="button_box">
                         <button  class="oe_stat_button" name="import_from_db" type="object" icon="fa-file-text-o">
                         </button>
-                    </div>
+                    </div>-->
                     <group>
                         <field name="host"/>
                         <field name="port"/>
                         <field name="database"/>
                         <field name="username"/>
                         <field name="password"/>
-                        <field name="query"/>
+                        <!--                        <field name="query"/>-->
                     </group>
                 </sheet>
             </form>
@@ -28,7 +34,8 @@
         <field name="model">mysql.connector</field>
         <field name="arch" type="xml">
             <tree string="mysql_connector_tree">
-                <field name="host"/>
+                <field name="name"/>
+                <field name="username"/>
             </tree>
         </field>
     </record>
@@ -37,7 +44,7 @@
         <field name="name">Connector</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mysql.connector</field>
-<!--        <field name="binding_view_types">form</field>-->
+        <!--        <field name="binding_view_types">form</field>-->
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">

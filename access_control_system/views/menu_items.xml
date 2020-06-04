@@ -7,16 +7,16 @@
                   sequence="90"/>
         <!-- This Menu Item must have a parent and an action -->
         <menuitem id="access_control_system_readers" name="Readers" parent="access_control_system_menu"
-                  action="acs_controller_reader_act_window" sequence="10"/>
+                  action="access_control_system.acs_controller_reader_act_window" sequence="10"/>
 
         <menuitem id="access_control_system_controllers" name="Controllers" parent="access_control_system_menu"
-                  action="acs_controller_act_window" sequence="9"/>
+                  action="access_control_system.acs_controller_act_window" sequence="9"/>
 
         <menuitem id="access_control_system_zones" name="Zones" parent="access_control_system_menu"
-                  action="acs_zone_act_window" sequence="8"/>
+                  action="access_control_system.acs_zone_act_window" sequence="8"/>
 
         <menuitem id="access_control_system_work_types" name="Work Types" parent="access_control_system_menu"
-                  action="acs_work_type_act_window" sequence="11"/>
+                  action="access_control_system.acs_work_type_act_window" sequence="11"/>
 
 
     </data>

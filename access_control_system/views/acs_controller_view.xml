@@ -14,13 +14,17 @@
                                 <field name="name" placeholder="Title"/>
                             </h1>
                         </div>
-                        <group>
+                        <group col="1">
                             <group>
                                 <field name="zone_id"/>
                                 <field name="access_level"/>
-                            </group>
-                            <group>
-                                <field name="reader_ids"/>
+                                <field name="reader_ids" context="{'default_controller_id' : active_id}">
+                                    <tree>
+                                        <field name="name" width="50%"/>
+                                        <field name="controller_id" width="25%"/>
+                                        <field name="type" width="25%"/>
+                                    </tree>
+                                </field>
                             </group>
                         </group>
                     </sheet>
@@ -40,18 +44,18 @@
             </field>
         </record>
 
-<!--        <record id="acs_controllers_controller_search_view" model="ir.ui.view">-->
-<!--            <field name="name">access.acs_controllers_controller.search</field>-->
-<!--            <field name="model">access.acs_controllers_controller</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <search string="ModelTitle">-->
-<!--                    <group expand="1" string="Group By">-->
-<!--                        <filter string="Example Field" name="example_field" domain="[]"-->
-<!--                                context="{'group_by':'example_field'}"/>-->
-<!--                    </group>-->
-<!--                </search>-->
-<!--            </field>-->
-<!--        </record>-->
+        <!--        <record id="acs_controllers_controller_search_view" model="ir.ui.view">-->
+        <!--            <field name="name">access.acs_controllers_controller.search</field>-->
+        <!--            <field name="model">access.acs_controllers_controller</field>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <search string="ModelTitle">-->
+        <!--                    <group expand="1" string="Group By">-->
+        <!--                        <filter string="Example Field" name="example_field" domain="[]"-->
+        <!--                                context="{'group_by':'example_field'}"/>-->
+        <!--                    </group>-->
+        <!--                </search>-->
+        <!--            </field>-->
+        <!--        </record>-->
 
         <record id="acs_controller_act_window" model="ir.actions.act_window">
             <field name="name">[ACTION] Access Control System: Controller</field>

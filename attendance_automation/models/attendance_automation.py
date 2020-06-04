@@ -1,45 +1,50 @@
 from odoo import fields, models, api
 import datetime
+from collections import defaultdict
 
 
 class AttendanceAutomation(models.Model):
     _inherit = "hr.attendance"
-    _inherits = {
-        "mysql.connector": "mysql_id"
-    }
-
-    mysql_ids = fields.Many2one('mysql.connector', required=True)
 
     def generate_query_body_for_event(self):
-        def _get_time_domain_for_event(delta_minutes):
-            datetime_now = datetime.datetime.now()
-            datetime_start = datetime_now - datetime.timedelta(minutes=delta_minutes)
+        def _get_time_domain_for_event():
+            datetime_now = datetime.datetime.now() + datetime.timedelta(hours=6)
+            datetime_start = datetime_now - datetime.timedelta(minutes=1)
             sql_datetime_now = datetime_now.strftime("%Y-%m-%d %H:%M:%S")
             sql_datetime_start = datetime_start.strftime("%Y-%m-%d %H:%M:%S")
-            print(sql_datetime_start, sql_datetime_now)
-            return " WHERE e.db_time_label >= '%s' AND e.db_time_label <= '%s'" % (sql_datetime_start, sql_datetime_now)
+            print(sql_datetime_now)
+            # return " WHERE e.db_time_label >= '%s' AND e.db_time_label <= '%s'" % (timelabels[0], timelabels[1])
+            return " WHERE e.db_time_label >= '%s' AND e.db_time_label <= '%s'" % (
+                sql_datetime_start, sql_datetime_now)
 
-        QUERY = "SELECT u.first_name, u.last_name, u.middle_name e.db_time_label FROM event e" \
+        QUERY = "SELECT e.id, u.first_name, u.last_name, u.middle_name, e.db_time_label, e.device_id FROM event e" \
                 " LEFT JOIN user_card uc USING(identifier)" \
                 " LEFT JOIN user u ON e.user_id = u.id"
 
-        return QUERY + _get_time_domain_for_event(1)
+        print(QUERY + _get_time_domain_for_event())
+        return QUERY + _get_time_domain_for_event()
 
     def make_attendance(self, **kwargs):
+        print("make attendance")
         reader_id = kwargs["reader_id"]
-        if self.env["acs.controller.reader"].search([["id", "=", reader_id], ["type", "=", "enter"]]):
+        reader = self.env["acs.controller.reader"].search([["id", "=", reader_id]])
+        if reader.type == "enter":
+            print("ENTER")
             data = {"employee_id": kwargs["employee_id"]}
             try:
                 self.env['hr.attendance'].create(data)
             except SystemError as e:
                 print(e, "has been detected")
-        else:
-            data = {"employee_id": kwargs["employee_id"],
-                    "check_out"  : kwargs["timelabel"]}
+        elif reader.type == "exit":
+            print("EXIT")
+            data = {"check_out": kwargs["timelabel"]}
             try:
-                self.env['hr.attendance'].write(data)
+                self.env["hr.attendance"].search([["employee_id", "=", kwargs["employee_id"]]], limit=1).write(data)
             except SystemError as e:
                 print(e, "has been detected")
+        else:
+            print("Device with ID = %d has not been found in the system!"
+                  % (reader_id if reader_id is not None else 0))
 
     # def search_employee_ids(self):
     #     employees = self.env['hr.employee'].search([])
@@ -49,22 +54,87 @@ class AttendanceAutomation(models.Model):
     #     return employee_ids
 
     def get_employee_id(self, employee_name):
+        employee_id = 0
         try:
-            employee_id = self.env["hr.employee"].search([["name", "like", employee_name]]).id
+            employee_id = self.env["hr.employee"].search([["name", "=", employee_name.rstrip()]]).id
         except:
-            employee_id = 0
+            pass
         finally:
+            print("get_employee_id ", employee_id)
             return employee_id
 
-    def cron_job(self):
-        records = []
-        for mysql in self.mysql_ids:
-            mysql.establish_connection()
-            records.append(mysql.execute_query(self.generate_query_body_for_event()))
-        for record in records:
-            for first_name, last_name, middle_name, db_time_label, device_id in record:
-                employee_id = self.get_employee_id(last_name + first_name + (middle_name if not "NULL" else ""))
-                if employee_id:
-                    self.make_attendance(employee_id=employee_id, timelabel=db_time_label, reader_id=device_id)
-                else:
-                    print("Problems creating record")
+    def sort_mysql_records(self, unsorted_records):
+        sorted_records = defaultdict(dict)
+        print("mysql_records ", unsorted_records)
+        if unsorted_records is not None:
+            for id, first_name, last_name, middle_name, db_time_label, device_id in unsorted_records:
+                first_name = first_name if first_name != None else ""
+                middle_name = middle_name if middle_name != None else ""
+                last_name = last_name if last_name != None else ""
+
+                name = last_name + " " + first_name + " " + middle_name
+                if name == "":
+                    continue
+
+                name = name if name[-1] != " " else name[:-1]
+                sorted_records[name][id] = [db_time_label, device_id]
+        print("mysql_records ", sorted_records)
+        return sorted_records
+
+    def sort_odoo_records(self, unsorted_records):
+        sorted_records = defaultdict(dict)
+        if unsorted_records is not None:
+            for attendance in unsorted_records:
+                sorted_records[attendance.employee_id.id][attendance.id] = [attendance.check_in, attendance.check_out]
+        print("odoo_records ", sorted_records)
+        return sorted_records
+
+    @api.model
+    def cron_job(self, mysql_id):
+        if datetime.datetime.now() > datetime.datetime.now().replace(hour=3, minute=0, second=0) \
+                and datetime.datetime.now() < datetime.datetime.now().replace(hour=17, minute=0, second=0):
+
+            # date = datetime.date.today()
+            # array = [[str(date) + " 00:00:00", str(date) + " 03:00:00"],
+            #          [str(date) + " 03:00:00", str(date) + " 07:00:00"],
+            #          [str(date) + " 07:00:00", str(date) + " 08:00:00"],
+            #          [str(date) + " 08:00:00", str(date) + " 12:00:00"]]
+
+            mysql = self.env["mysql.connector"].search([['id', '=', mysql_id]])
+
+            if mysql:
+                mysql.establish_connection()
+                odoo_attendances = self.sort_odoo_records(self.env["hr.attendance"].search(
+                    ["|",
+                     "&", ("check_in", "<=", datetime.datetime.now()), ("check_in", ">=", mysql.pivot_time),
+                     "&", ("check_out", "<=", datetime.datetime.now()), ("check_out", ">=", mysql.pivot_time)]
+                ))
+                mysql_attendances = self.sort_mysql_records(
+                    mysql.execute_query(self.generate_query_body_for_event())
+                )
+                if mysql_attendances != {}:
+                    for employee in mysql_attendances:
+                        employee_id = self.get_employee_id(employee)
+                        print("cron_job ", employee_id)
+                        # try:
+                        print(len(mysql_attendances[employee]))
+                        if len(mysql_attendances[employee]) % 2 != 0:
+                            this_employee_attendances = odoo_attendances.pop(employee_id)
+                            print("cron_job ", this_employee_attendances)
+                            latest_attendance_id = max(this_employee_attendances, key=int)
+                            valid_attendance_id = min(mysql_attendances[employee], key=int)
+                            latest_attendance = this_employee_attendances[latest_attendance_id]
+                            current_attendance = mysql_attendances[employee][valid_attendance_id]
+                            print("cron_job ", latest_attendance, current_attendance)
+                            if latest_attendance[1] == False and current_attendance[0] - latest_attendance[
+                                0] >= datetime.timedelta(minutes=1):
+                                self.make_attendance(reader_id=current_attendance[1],
+                                                     employee_id=employee_id,
+                                                     timelabel=current_attendance[0] - datetime.timedelta(hours=6))
+                            else:
+                                self.make_attendance(reader_id=current_attendance[1],
+                                                     employee_id=employee_id,
+                                                     timelabel=current_attendance[0] - datetime.timedelta(hours=6))
+
+                        # except:
+                        #     print("Problems with following Employee")
