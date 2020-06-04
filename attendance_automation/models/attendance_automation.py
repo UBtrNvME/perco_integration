@@ -116,25 +116,24 @@ class AttendanceAutomation(models.Model):
                     for employee in mysql_attendances:
                         employee_id = self.get_employee_id(employee)
                         print("cron_job ", employee_id)
-                        # try:
-                        print(len(mysql_attendances[employee]))
-                        if len(mysql_attendances[employee]) % 2 != 0:
-                            this_employee_attendances = odoo_attendances.pop(employee_id)
-                            print("cron_job ", this_employee_attendances)
-                            latest_attendance_id = max(this_employee_attendances, key=int)
-                            valid_attendance_id = min(mysql_attendances[employee], key=int)
-                            latest_attendance = this_employee_attendances[latest_attendance_id]
-                            current_attendance = mysql_attendances[employee][valid_attendance_id]
-                            print("cron_job ", latest_attendance, current_attendance)
-                            if latest_attendance[1] == False and current_attendance[0] - latest_attendance[
-                                0] >= datetime.timedelta(minutes=1):
-                                self.make_attendance(reader_id=current_attendance[1],
-                                                     employee_id=employee_id,
-                                                     timelabel=current_attendance[0] - datetime.timedelta(hours=6))
-                            else:
-                                self.make_attendance(reader_id=current_attendance[1],
-                                                     employee_id=employee_id,
-                                                     timelabel=current_attendance[0] - datetime.timedelta(hours=6))
-
-                        # except:
-                        #     print("Problems with following Employee")
+                        try:
+                            print(len(mysql_attendances[employee]))
+                            if len(mysql_attendances[employee]) % 2 != 0:
+                                this_employee_attendances = odoo_attendances.pop(employee_id)
+                                print("cron_job ", this_employee_attendances)
+                                latest_attendance_id = max(this_employee_attendances, key=int)
+                                valid_attendance_id = min(mysql_attendances[employee], key=int)
+                                latest_attendance = this_employee_attendances[latest_attendance_id]
+                                current_attendance = mysql_attendances[employee][valid_attendance_id]
+                                print("cron_job ", latest_attendance, current_attendance)
+                                if latest_attendance[1] == False and current_attendance[0] - latest_attendance[
+                                    0] >= datetime.timedelta(minutes=1):
+                                    self.make_attendance(reader_id=current_attendance[1],
+                                                         employee_id=employee_id,
+                                                         timelabel=current_attendance[0] - datetime.timedelta(hours=6))
+                                else:
+                                    self.make_attendance(reader_id=current_attendance[1],
+                                                         employee_id=employee_id,
+                                                         timelabel=current_attendance[0] - datetime.timedelta(hours=6))
+                        except:
+                            print("Problems with following Employee")
