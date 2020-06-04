@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_acs_controller,acs.controller.,model_acs_controller,base.group_user,1,1,1,1
+access_acs_zone,acs.zone,model_acs_zone,base.group_user,1,1,1,1
 access_acs_controller_reader,acs.controller.reader,model_acs_controller_reader,base.group_user,1,1,1,1
