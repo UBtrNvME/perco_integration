@@ -13,7 +13,8 @@ class MysqlConnector(models.Model):
          "Connectors name must be unique.")
     ]
 
-    name = fields.Char(string="Name", translate=True)
+    name = fields.Char(string="Name", translate=True, compute="_compute_name")
+    name_in_form_view = fields.Char(string="Name To Show", translate=True)
     host = fields.Char(string="Host address", translate=True, default="")
     database = fields.Char(string="Database name", translate=True, default="")
     port = fields.Char(string="Database port", translate=True, default="")
@@ -23,8 +24,15 @@ class MysqlConnector(models.Model):
 
     @api.onchange("host", "port", "database")
     def _generate_name(self):
-        if self.port != "" and self.host != "" and self.database != "":
-            self.name = self.database + "@" + self.host + ":" + self.port
+        for mc in self:
+            if mc.host and mc.database and mc.port:
+                mc.name_in_form_view = mc.database + "@" + mc.host + ":" + mc.port
+                mc.name = mc.name_in_form_view
+
+    @api.depends("name_in_form_view")
+    def _compute_name(self):
+        for mc in self:
+            mc.name = mc.name_in_form_view
 
     def establish_connection(self):
         for mc in self:
@@ -79,6 +87,7 @@ class MysqlConnector(models.Model):
         mc = super(MysqlConnector, self).create(values)
         # values["name"] = values["database"] + "@" + values["host"] + ":" + values["port"]
         # Validating connection
+
         if mc.check_connection(values["host"], values["username"], values["port"], values["database"],
                                values["password"]):
             return mc
