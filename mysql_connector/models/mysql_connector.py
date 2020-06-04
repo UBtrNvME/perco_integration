@@ -13,7 +13,7 @@ class MysqlConnector(models.Model):
          "Connectors name must be unique.")
     ]
 
-    name = fields.Char(string="Name")
+    name = fields.Char(string="Name", translate=True)
     host = fields.Char(string="Host address", translate=True, default="")
     database = fields.Char(string="Database name", translate=True, default="")
     port = fields.Char(string="Database port", translate=True, default="")
