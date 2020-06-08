@@ -132,7 +132,7 @@ class AttendanceAutomation(models.Model):
                         employee_id = self.get_employee_id(employee)
                         _logger.warn("Employee id: %s" % (employee_id))
                         try:
-                            print(len(mysql_attendances[employee]))
+                            _logger.warn("length of the record: %s" % len(mysql_attendances[employee]))
                             if len(mysql_attendances[employee]) % 2 != 0:
                                 this_employee_attendances = odoo_attendances.pop(employee_id)
                                 _logger.warn("This employee attendance:")
