@@ -110,7 +110,7 @@ class AttendanceAutomation(models.Model):
             #          [str(date) + " 08:00:00", str(date) + " 12:00:00"]]
 
             # domain = [str(data[0]), str(data[1]), str(data[2])]
-            mysql = self.env["mysql.connector"].search([["name_in_form_view", "=", data]])
+            mysql = self.env["mysql.connector"].search([["id", "=", data]])
             _logger.warn(mysql)
             if mysql:
                 mysql.establish_connection()
