@@ -102,7 +102,7 @@ class AttendanceAutomation(models.Model):
 
             # domain = [str(data[0]), str(data[1]), str(data[2])]
             mysql = self.env["mysql.connector"].search([["name_in_form_view", "=", data]])
-
+            print(mysql)
             if mysql:
                 mysql.establish_connection()
                 odoo_attendances = self.sort_odoo_records(self.env["hr.attendance"].search(
@@ -113,6 +113,8 @@ class AttendanceAutomation(models.Model):
                 mysql_attendances = self.sort_mysql_records(
                     mysql.execute_query(self.generate_query_body_for_event())
                 )
+                print(odoo_attendances)
+                print(mysql_attendances)
                 if mysql_attendances != {}:
                     for employee in mysql_attendances:
                         employee_id = self.get_employee_id(employee)
