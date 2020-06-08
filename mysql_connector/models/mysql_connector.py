@@ -56,7 +56,7 @@ class MysqlConnector(models.Model):
                 cursor.execute(query)
                 res = cursor.fetchall()
                 _logger.warn(str(res))
-                return cursor.fetchall()
+                return res
             except Error:
                 return None
             finally:
