@@ -13,10 +13,10 @@
                         </h1>
                         <field name="name_in_form_view" invisible="1"/>
                     </div>
-                    <!--<div class="oe_button_box" name="button_box">
-                        <button  class="oe_stat_button" name="import_from_db" type="object" icon="fa-file-text-o">
+                    <div class="oe_button_box" name="button_box">
+                        <button  class="oe_stat_button" name="check_connection" type="object" icon="fa-file-text-o">
                         </button>
-                    </div>-->
+                    </div>
                     <group>
                         <field name="host"/>
                         <field name="port"/>
