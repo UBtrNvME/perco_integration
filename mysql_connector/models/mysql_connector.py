@@ -3,6 +3,9 @@ import mysql.connector
 import datetime
 from mysql.connector import Error
 from odoo.osv import osv
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class MysqlConnector(models.Model):
@@ -51,6 +54,8 @@ class MysqlConnector(models.Model):
             connection, cursor = mc.establish_connection()
             try:
                 cursor.execute(query)
+                res = cursor.fetchall()
+                _logger.warn(str(res))
                 return cursor.fetchall()
             except Error:
                 return None
