@@ -90,7 +90,7 @@ class AttendanceAutomation(models.Model):
         return sorted_records
 
     @api.model
-    def cron_job(self, connector_name):
+    def cron_job(self, data):
         if datetime.datetime.now() > datetime.datetime.now().replace(hour=3, minute=0, second=0) \
                 and datetime.datetime.now() < datetime.datetime.now().replace(hour=12, minute=0, second=0):
 
@@ -100,7 +100,8 @@ class AttendanceAutomation(models.Model):
             #          [str(date) + " 07:00:00", str(date) + " 08:00:00"],
             #          [str(date) + " 08:00:00", str(date) + " 12:00:00"]]
 
-            mysql = self.env["mysql.connector"].search([['name', '=', connector_name]])
+            domain = [str(data[0]), str(data[1]), str(data[2])]
+            mysql = self.env["mysql.connector"].search([[domain]])
 
             if mysql:
                 mysql.establish_connection()
