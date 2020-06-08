@@ -71,7 +71,8 @@ class AttendanceAutomation(models.Model):
 
     def sort_mysql_records(self, unsorted_records):
         sorted_records = defaultdict(dict)
-        _logger.warn("mysql_records: ", unsorted_records)
+        _logger.warn("mysql_records:")
+        _logger.warn(unsorted_records)
         if unsorted_records != []:
             for id, first_name, last_name, middle_name, db_time_label, device_id in unsorted_records:
                 first_name = first_name if first_name != None else ""
@@ -84,7 +85,8 @@ class AttendanceAutomation(models.Model):
 
                 name = name if name[-1] != " " else name[:-1]
                 sorted_records[name][id] = [db_time_label, device_id]
-        _logger.warn("mysql_records: ", sorted_records)
+        _logger.warn("mysql_records:")
+        _logger.warn(sorted_records)
         return sorted_records
 
     def sort_odoo_records(self, unsorted_records):
