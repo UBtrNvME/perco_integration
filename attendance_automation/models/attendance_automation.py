@@ -26,10 +26,9 @@ class AttendanceAutomation(models.Model):
                 " LEFT JOIN user u ON e.user_id = u.id"
 
         _logger.warn("QUERY:")
-        _logger.warn(QUERY)
+        _logger.warn(QUERY + _get_time_domain_for_event())
 
-        print(QUERY + _get_time_domain_for_event())
-        return QUERY + _get_time_domain_for_event()
+        return QUERY
 
     def make_attendance(self, **kwargs):
         print("make attendance")
