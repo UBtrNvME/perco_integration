@@ -28,7 +28,7 @@ class AttendanceAutomation(models.Model):
         _logger.warn("QUERY:")
         _logger.warn(QUERY + _get_time_domain_for_event())
 
-        return QUERY
+        return QUERY +_get_time_domain_for_event()
 
     def make_attendance(self, **kwargs):
         print("make attendance")
