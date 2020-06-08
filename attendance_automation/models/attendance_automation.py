@@ -25,6 +25,9 @@ class AttendanceAutomation(models.Model):
                 " LEFT JOIN user_card uc USING(identifier)" \
                 " LEFT JOIN user u ON e.user_id = u.id"
 
+        _logger.warn("QUERY:")
+        _logger.warn(QUERY)
+
         print(QUERY + _get_time_domain_for_event())
         return QUERY + _get_time_domain_for_event()
 
@@ -96,8 +99,8 @@ class AttendanceAutomation(models.Model):
     @api.model
     def cron_job(self, data):
         _logger.warn("Cron have started!!")
-        if datetime.datetime.now() > datetime.datetime.now().replace(hour=3, minute=0, second=0) \
-                and datetime.datetime.now() < datetime.datetime.now().replace(hour=12, minute=0, second=0):
+        if datetime.datetime.now() > datetime.datetime.now().replace(hour=0, minute=0, second=0) \
+                and datetime.datetime.now() < datetime.datetime.now().replace(hour=16, minute=0, second=0):
 
             # date = datetime.date.today()
             # array = [[str(date) + " 00:00:00", str(date) + " 03:00:00"],
