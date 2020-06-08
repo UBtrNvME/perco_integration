@@ -12,7 +12,7 @@ class AttendanceAutomation(models.Model):
 
     def generate_query_body_for_event(self):
         def _get_time_domain_for_event():
-            datetime_now = datetime.datetime.now() + datetime.timedelta(hours=6)
+            datetime_now = datetime.datetime.now()
             datetime_start = datetime_now - datetime.timedelta(minutes=1)
             sql_datetime_now = datetime_now.strftime("%Y-%m-%d %H:%M:%S")
             sql_datetime_start = datetime_start.strftime("%Y-%m-%d %H:%M:%S")
