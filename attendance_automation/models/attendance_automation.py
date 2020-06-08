@@ -1,6 +1,10 @@
 from odoo import fields, models, api
 import datetime
 from collections import defaultdict
+import logging
+
+
+_logger = logging.getLogger(__name__)
 
 
 class AttendanceAutomation(models.Model):
@@ -91,6 +95,7 @@ class AttendanceAutomation(models.Model):
 
     @api.model
     def cron_job(self, data):
+        _logger.warn("Cron have started!!")
         if datetime.datetime.now() > datetime.datetime.now().replace(hour=3, minute=0, second=0) \
                 and datetime.datetime.now() < datetime.datetime.now().replace(hour=12, minute=0, second=0):
 
@@ -102,7 +107,7 @@ class AttendanceAutomation(models.Model):
 
             # domain = [str(data[0]), str(data[1]), str(data[2])]
             mysql = self.env["mysql.connector"].search([["name_in_form_view", "=", data]])
-            print(mysql)
+            _logger.warn(mysql)
             if mysql:
                 mysql.establish_connection()
                 odoo_attendances = self.sort_odoo_records(self.env["hr.attendance"].search(
@@ -113,12 +118,13 @@ class AttendanceAutomation(models.Model):
                 mysql_attendances = self.sort_mysql_records(
                     mysql.execute_query(self.generate_query_body_for_event())
                 )
-                print(odoo_attendances)
-                print(mysql_attendances)
+                _logger.warn("ODOO ATTENDANCES:")
+                _logger.warn(odoo_attendances)
+                _logger.warn("MYSQL ATTENDANCES:")
+                _logger.warn(mysql_attendances)
                 if mysql_attendances != {}:
                     for employee in mysql_attendances:
                         employee_id = self.get_employee_id(employee)
-                        print("cron_job ", employee_id)
                         try:
                             print(len(mysql_attendances[employee]))
                             if len(mysql_attendances[employee]) % 2 != 0:
