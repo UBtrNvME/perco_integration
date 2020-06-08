@@ -127,8 +127,10 @@ class AttendanceAutomation(models.Model):
                 _logger.warn("MYSQL ATTENDANCES:")
                 _logger.warn(mysql_attendances)
                 if mysql_attendances != {}:
+                    _logger.warn("Starting searching!!!")
                     for employee in mysql_attendances:
                         employee_id = self.get_employee_id(employee)
+                        _logger.warn("Employee id: %s" % (employee_id))
                         try:
                             print(len(mysql_attendances[employee]))
                             if len(mysql_attendances[employee]) % 2 != 0:
@@ -152,4 +154,4 @@ class AttendanceAutomation(models.Model):
                                                          employee_id=employee_id,
                                                          timelabel=current_attendance[0] - datetime.timedelta(hours=6))
                         except:
-                            print("Problems with following Employee")
+                            _logger.warn("Problems with following Employee")
