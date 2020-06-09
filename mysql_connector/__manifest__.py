@@ -10,7 +10,8 @@
     'license'     : 'AGPL-3',
     'depends'     : ["hr_attendance"],
     'data'        : ["security/ir.model.access.csv",
-                     "views/connector_view.xml"],
+                     "views/connector_view.xml",
+                     "data/shift_pivot_cron.xml"],
     'demo'        : [],
     'installable' : True,
     'auto_install': False

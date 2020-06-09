@@ -5,6 +5,7 @@ from mysql.connector import Error
 from odoo.osv import osv
 import logging
 
+
 _logger = logging.getLogger(__name__)
 
 
@@ -31,6 +32,11 @@ class MysqlConnector(models.Model):
             if mc.host and mc.database and mc.port:
                 mc.name_in_form_view = mc.database + "@" + mc.host + ":" + mc.port
                 mc.name = mc.name_in_form_view
+
+    @api.model
+    def shift_pivot(self):
+        for mc in self:
+            mc.pivot_time = datetime.datetime.now()
 
     @api.depends("name_in_form_view")
     def _compute_name(self):
