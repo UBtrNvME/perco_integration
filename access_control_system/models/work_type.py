@@ -5,4 +5,4 @@ class WorkType (models.Model):
     _name = 'acs.work.type'
     _description = 'Work Type'
 
-    name = fields.Char(string="Type Name")
+    name = fields.Char(string="Type Name", translate=True)

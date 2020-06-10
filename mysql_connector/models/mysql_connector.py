@@ -24,7 +24,7 @@ class MysqlConnector(models.Model):
     port = fields.Char(string="Database port", translate=True, default="")
     username = fields.Char(string="Username", translate=True)
     password = fields.Char(string="User password", translate=True)
-    pivot_time = fields.Datetime(string="Pivot Time")
+    pivot_time = fields.Datetime(string="Pivot Time", translate=True)
 
     @api.onchange("host", "port", "database")
     def _generate_name(self):
