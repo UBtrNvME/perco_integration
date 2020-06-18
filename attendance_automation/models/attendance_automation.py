@@ -1,7 +1,8 @@
-from odoo import fields, models, api
 import datetime
-from collections import defaultdict
 import logging
+from collections import defaultdict
+
+from odoo import api, models
 
 
 _logger = logging.getLogger(__name__)
@@ -28,30 +29,36 @@ class AttendanceAutomation(models.Model):
         _logger.warn("QUERY:")
         _logger.warn(QUERY + _get_time_domain_for_event())
 
-        return QUERY +_get_time_domain_for_event()
+        return QUERY + _get_time_domain_for_event()
 
     def make_attendance(self, **kwargs):
         _logger.warn("make attendance")
         reader_id = kwargs["reader_id"]
         reader = self.env["acs.controller.reader"].search([["external_id", "=", reader_id]])
-        employee_working_zone = self.env["hr.employee"].browse(kwargs["employee_id"])[0].work_place.ids
-        if reader.to_zone_id in employee_working_zone:
+        employee = self.env["hr.employee"].browse(kwargs["employee_id"])[0]
+
+        try_to_access_zone = self.env["acs.zone"].browse(reader.to_zone_id)
+
+        if employee.job not in try_to_access_zone.permitted_roles.ids:
+            return (employee.name, try_to_access_zone.name)
+
+        if reader.to_zone_id in employee.work_place.ids:
             _logger.warn("ENTER")
-            data = {"employee_id": kwargs["employee_id"]}
+            data = {"employee_id": employee.id}
             try:
                 self.env['hr.attendance'].create(data)
             except SystemError as e:
                 _logger.warn(e, "has been detected")
-        elif reader.from_zone_id in employee_working_zone:
+        elif reader.from_zone_id in employee.work_place.ids:
             _logger.warn("EXIT")
             data = {"check_out": kwargs["timelabel"]}
             try:
-                self.env["hr.attendance"].search([["employee_id", "=", kwargs["employee_id"]]], limit=1).write(data)
+                self.env["hr.attendance"].search([["employee_id", "=", employee.id]], limit=1).write(data)
             except SystemError as e:
                 _logger.warn(e, "has been detected")
         else:
             _logger.warn("Device with ID = %d has not been found in the system!"
-                  % (reader_id if reader_id is not None else 0))
+                         % (reader_id if reader_id is not None else 0))
 
     def search_employee_ids(self):
         employees = self.env['hr.employee'].search([])
@@ -142,26 +149,34 @@ class AttendanceAutomation(models.Model):
                                     this_employee_attendances = odoo_attendances.pop(employee_id)
                                 else:
                                     _logger.warn("Creating Attendance")
-                                    self.make_attendance(reader_id=current_attendance[1],
-                                                         employee_id=employee_id,
-                                                         timelabel=current_attendance[0])
+                                    info = self.make_attendance(reader_id=current_attendance[1],
+                                                                employee_id=employee_id,
+                                                                timelabel=current_attendance[0])
+
+                                    _logger.warn(
+                                        "Following user, %s, tried to access %s, without permission!" % (info))
                                     continue
                                 _logger.warn("This employee attendance:")
                                 _logger.warn(this_employee_attendances)
                                 latest_attendance_id = max(this_employee_attendances, key=int)
                                 latest_attendance = this_employee_attendances[latest_attendance_id]
 
-                                _logger.warn("\ncurrent-attendance: %s\nlatest-attendance: %s"%(current_attendance, latest_attendance))
+                                _logger.warn("\ncurrent-attendance: %s\nlatest-attendance: %s" % (
+                                    current_attendance, latest_attendance))
                                 if latest_attendance[1] == False and current_attendance[0] - latest_attendance[
                                     0] >= datetime.timedelta(minutes=1):
                                     _logger.warn("Creating Attendance")
-                                    self.make_attendance(reader_id=current_attendance[1],
-                                                         employee_id=employee_id,
-                                                         timelabel=current_attendance[0])
+                                    info = self.make_attendance(reader_id=current_attendance[1],
+                                                                employee_id=employee_id,
+                                                                timelabel=current_attendance[0])
+                                    _logger.warn(
+                                        "Following user, %s, tried to access %s, without permission!" % (info))
                                 else:
                                     _logger.warn("Creating Attendance")
-                                    self.make_attendance(reader_id=current_attendance[1],
-                                                         employee_id=employee_id,
-                                                         timelabel=current_attendance[0])
+                                    info = self.make_attendance(reader_id=current_attendance[1],
+                                                                employee_id=employee_id,
+                                                                timelabel=current_attendance[0])
+                                    _logger.warn(
+                                        "Following user, %s, tried to access %s, without permission!" % (info))
                         except:
                             _logger.warn("Problems with following Employee")
