@@ -152,9 +152,9 @@ class AttendanceAutomation(models.Model):
                                     info = self.make_attendance(reader_id=current_attendance[1],
                                                                 employee_id=employee_id,
                                                                 timelabel=current_attendance[0])
-
-                                    _logger.warn(
-                                        "Following user, %s, tried to access %s, without permission!" % (info))
+                                    if info:
+                                        _logger.warn(
+                                            "Following user, %s, tried to access %s, without permission!" % (info))
                                     continue
                                 _logger.warn("This employee attendance:")
                                 _logger.warn(this_employee_attendances)
@@ -169,14 +169,18 @@ class AttendanceAutomation(models.Model):
                                     info = self.make_attendance(reader_id=current_attendance[1],
                                                                 employee_id=employee_id,
                                                                 timelabel=current_attendance[0])
-                                    _logger.warn(
-                                        "Following user, %s, tried to access %s, without permission!" % (info))
+                                    if info:
+                                        _logger.warn(
+                                            "Following user, %s, tried to access %s, without permission!" % (info))
+
                                 else:
                                     _logger.warn("Creating Attendance")
                                     info = self.make_attendance(reader_id=current_attendance[1],
                                                                 employee_id=employee_id,
                                                                 timelabel=current_attendance[0])
-                                    _logger.warn(
-                                        "Following user, %s, tried to access %s, without permission!" % (info))
+                                    if info:
+                                        _logger.warn(
+                                            "Following user, %s, tried to access %s, without permission!" % (info))
+
                         except:
                             _logger.warn("Problems with following Employee")
