@@ -139,48 +139,48 @@ class AttendanceAutomation(models.Model):
                     for employee in mysql_attendances:
                         employee_id = self.get_employee_id(employee)
                         _logger.warn("Employee id: %s" % (employee_id))
-                        try:
-                            _logger.warn("length of the record: %s" % len(mysql_attendances[employee]))
-                            if len(mysql_attendances[employee]) % 2 != 0:
-                                this_employee_attendances = {}
-                                valid_attendance_id = min(mysql_attendances[employee], key=int)
-                                current_attendance = mysql_attendances[employee][valid_attendance_id]
-                                if employee_id in odoo_attendances:
-                                    this_employee_attendances = odoo_attendances.pop(employee_id)
-                                else:
-                                    _logger.warn("Creating Attendance")
-                                    info = self.make_attendance(reader_id=current_attendance[1],
-                                                                employee_id=employee_id,
-                                                                timelabel=current_attendance[0])
-                                    if info:
-                                        _logger.warn(
-                                            "Following user, %s, tried to access %s, without permission!" % (info))
-                                    continue
-                                _logger.warn("This employee attendance:")
-                                _logger.warn(this_employee_attendances)
-                                latest_attendance_id = max(this_employee_attendances, key=int)
-                                latest_attendance = this_employee_attendances[latest_attendance_id]
+                    # try:
+                        _logger.warn("length of the record: %s" % len(mysql_attendances[employee]))
+                        if len(mysql_attendances[employee]) % 2 != 0:
+                            this_employee_attendances = {}
+                            valid_attendance_id = min(mysql_attendances[employee], key=int)
+                            current_attendance = mysql_attendances[employee][valid_attendance_id]
+                            if employee_id in odoo_attendances:
+                                this_employee_attendances = odoo_attendances.pop(employee_id)
+                            else:
+                                _logger.warn("Creating Attendance")
+                                info = self.make_attendance(reader_id=current_attendance[1],
+                                                            employee_id=employee_id,
+                                                            timelabel=current_attendance[0])
+                                if info:
+                                    _logger.warn(
+                                        "Following user, %s, tried to access %s, without permission!" % (info))
+                                continue
+                            _logger.warn("This employee attendance:")
+                            _logger.warn(this_employee_attendances)
+                            latest_attendance_id = max(this_employee_attendances, key=int)
+                            latest_attendance = this_employee_attendances[latest_attendance_id]
 
-                                _logger.warn("\ncurrent-attendance: %s\nlatest-attendance: %s" % (
-                                    current_attendance, latest_attendance))
-                                if latest_attendance[1] == False and current_attendance[0] - latest_attendance[
-                                    0] >= datetime.timedelta(minutes=1):
-                                    _logger.warn("Creating Attendance")
-                                    info = self.make_attendance(reader_id=current_attendance[1],
-                                                                employee_id=employee_id,
-                                                                timelabel=current_attendance[0])
-                                    if info:
-                                        _logger.warn(
-                                            "Following user, %s, tried to access %s, without permission!" % (info))
+                            _logger.warn("\ncurrent-attendance: %s\nlatest-attendance: %s" % (
+                                current_attendance, latest_attendance))
+                            if latest_attendance[1] == False and current_attendance[0] - latest_attendance[
+                                0] >= datetime.timedelta(minutes=1):
+                                _logger.warn("Creating Attendance")
+                                info = self.make_attendance(reader_id=current_attendance[1],
+                                                            employee_id=employee_id,
+                                                            timelabel=current_attendance[0])
+                                if info:
+                                    _logger.warn(
+                                        "Following user, %s, tried to access %s, without permission!" % (info))
 
-                                else:
-                                    _logger.warn("Creating Attendance")
-                                    info = self.make_attendance(reader_id=current_attendance[1],
-                                                                employee_id=employee_id,
-                                                                timelabel=current_attendance[0])
-                                    if info:
-                                        _logger.warn(
-                                            "Following user, %s, tried to access %s, without permission!" % (info))
+                            else:
+                                _logger.warn("Creating Attendance")
+                                info = self.make_attendance(reader_id=current_attendance[1],
+                                                            employee_id=employee_id,
+                                                            timelabel=current_attendance[0])
+                                if info:
+                                    _logger.warn(
+                                        "Following user, %s, tried to access %s, without permission!" % (info))
 
-                        except:
-                            _logger.warn("Problems with following Employee")
+                    # except:
+                #     _logger.warn("Problems with following Employee")
