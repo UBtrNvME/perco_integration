@@ -17,12 +17,12 @@
                         <group col="1">
                             <group>
                                 <field name="zone_id"/>
-                                <field name="access_level"/>
+                                <!--                                <field name="access_level"/>-->
                                 <field name="reader_ids" context="{'default_controller_id' : active_id}">
                                     <tree>
                                         <field name="name" width="50%"/>
                                         <field name="controller_id" width="25%"/>
-                                        <field name="type" width="25%"/>
+                                        <!--<field name="type" width="25%"/>-->
                                     </tree>
                                 </field>
                             </group>
@@ -39,7 +39,7 @@
                 <tree string="Controller">
                     <field name="name"/>
                     <field name="zone_id"/>
-                    <field name="access_level"/>
+                    <!--                    <field name="access_level"/>-->
                 </tree>
             </field>
         </record>

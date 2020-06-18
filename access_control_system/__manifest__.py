@@ -14,7 +14,7 @@
                      "views/acs_controller_view.xml",
                      "views/acs_zone_view.xml",
                      "views/work_type_view.xml",
-                     "views/menu_items.xml"],
+                     "views/menu_items.xml",],
     'demo'        : [],
     'installable' : True,
     'auto_install': False,

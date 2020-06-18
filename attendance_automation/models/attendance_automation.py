@@ -34,14 +34,15 @@ class AttendanceAutomation(models.Model):
         print("make attendance")
         reader_id = kwargs["reader_id"]
         reader = self.env["acs.controller.reader"].search([["id", "=", reader_id]])
-        if reader.type == "enter":
+        employee_working_zone = self.env["hr.employee"].browse(kwargs["employee_id"])[0].work_place.ids
+        if reader.to_zone_id in employee_working_zone:
             print("ENTER")
             data = {"employee_id": kwargs["employee_id"]}
             try:
                 self.env['hr.attendance'].create(data)
             except SystemError as e:
                 print(e, "has been detected")
-        elif reader.type == "exit":
+        elif reader.from_zone_id in employee_working_zone:
             print("EXIT")
             data = {"check_out": kwargs["timelabel"]}
             try:
@@ -52,12 +53,12 @@ class AttendanceAutomation(models.Model):
             print("Device with ID = %d has not been found in the system!"
                   % (reader_id if reader_id is not None else 0))
 
-    # def search_employee_ids(self):
-    #     employees = self.env['hr.employee'].search([])
-    #     employee_ids = {}
-    #     for employee in employees:
-    #         employee_ids[employee.name] = employee.id
-    #     return employee_ids
+    def search_employee_ids(self):
+        employees = self.env['hr.employee'].search([])
+        employee_ids = {}
+        for employee in employees:
+            employee_ids[employee.name] = employee.id
+        return employee_ids
 
     def get_employee_id(self, employee_name):
         employee_id = 0

@@ -53,7 +53,17 @@
             </p>
         </field>
     </record>
-    <menuitem name="Connectors" id="mysql_connector_menu"
-              parent="hr_attendance.menu_hr_attendance_manage_attendances" action="mysql_connector_act_window"/>
 
+<!--    <record id="action_open_url" model="ir.actions.act_url">-->
+<!--        <field name="name">Link Open Url</field>-->
+<!--        <field name="type">ir.actions.act_url</field>-->
+<!--        <field name="url">https://odoo.com</field>-->
+<!--        <field name="target">self</field>-->
+<!--    </record>-->
+
+    <menuitem name="Connectors" id="mysql_connector_menu"
+              parent="hr_attendance.menu_hr_attendance_manage_attendances"
+              action="mysql_connector_act_window"/>
+
+<!--    <menuitem name="Link" id="link_menu" action="action_open_url"/>-->
 </odoo>

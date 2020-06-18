@@ -16,8 +16,10 @@
                         </div>
                         <group>
                             <group>
-                                <field name="type"/>
+                                <!--                                <field name="type"/>-->
                                 <field name="controller_id"/>
+                                <field name="from_zone_name"/>
+                                <field name="to_zone_name"/>
                             </group>
                         </group>
                     </sheet>
@@ -31,31 +33,44 @@
             <field name="arch" type="xml">
                 <tree string="Reader">
                     <field name="name"/>
-                    <field name="type"/>
+                    <!--<field name="type"/>-->
                     <field name="controller_id"/>
                 </tree>
             </field>
         </record>
 
-<!--        <record id="acs_controllers_reader_search_view" model="ir.ui.view">-->
-<!--            <field name="name">access.acs_controllers_reader.search</field>-->
-<!--            <field name="model">access.acs_controllers_reader</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <search string="ModelTitle">-->
-<!--                    <group expand="1" string="Group By">-->
-<!--                        <filter string="Example Field" name="example_field" domain="[]"-->
-<!--                                context="{'group_by':'example_field'}"/>-->
-<!--                    </group>-->
-<!--                </search>-->
-<!--            </field>-->
-<!--        </record>-->
+        <!--KANBAN VIEW-->
+        <record id="acs_controller_reader_kanban_view" model="ir.ui.view">
+            <field name="name">[KANBAN VIEW] Access Control System: Reader</field>
+            <field name="model">acs.controller.reader</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="to_zone">
+                    <field name="name"/>
+                    <field name="from_zone_name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+                                <div class="card-header">
+                                    <t t-esc="record.name.value"/>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Primary card title</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up
+                                        the bulk of the card's content.</p>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
 
         <record id="acs_controller_reader_act_window" model="ir.actions.act_window">
             <field name="name">[ACTION] Access Control System: Reader</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">acs.controller.reader</field>
             <field name="binding_view_types">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     There is no examples click here to add new ModelTitle.

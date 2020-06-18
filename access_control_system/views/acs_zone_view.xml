@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
+        <!--FORM VIEW-->
         <record id="acs_zone_form_view" model="ir.ui.view">
             <field name="name">[FORM VIEW] Access Control System: Zone</field>
             <field name="model">acs.zone</field>
@@ -14,48 +14,49 @@
                                 <field name="name" placeholder="Title"/>
                             </h1>
                         </div>
-                        <group col="1">
-                            <group>
-                                <field name="access_level"/>
-                                <field name="controller_ids" context="{'default_zone_id': active_id}">
-                                    <tree>
-                                        <field name="name" width="50%"/>
-                                        <field name="zone_id" width="25%"/>
-                                        <field name="access_level" width="25%"/>
-                                    </tree>
-                                </field>
-                            </group>
+                        <div name="button_box" class="oe_button_box">
+                            <button name="open_readers_view"
+                                    class="oe_stat_button"
+                                    icon="fa-bars"
+                                    type="object"
+                                    attrs="{'invisible': [['controller_id','=', False]]}"
+                                    string="Readers">
+                            </button>
+                        </div>
+                        <group>
+                            <field name="description"/>
+                            <field name="parent_id"/>
+                            <field name="controller_id" context="{'default_zone_id': active_id}"/>
                         </group>
+                        <notebook>
+                            <page name="technical" string="Technical">
+                                <div name="body">
+                                    <br/>
+                                    <h4>Permitted Roles</h4>
+                                    <br/>
+                                    <field name="permitted_roles" nolabel="1"/>
+                                </div>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
         </record>
 
+        <!--TREE VIEW-->
         <record id="acs_zone_tree_view" model="ir.ui.view">
             <field name="name">[TREE VIEW] Access Control System: Zone</field>
             <field name="model">acs.zone</field>
             <field name="arch" type="xml">
                 <tree string="Zone">
                     <field name="name"/>
-                    <field name="access_level"/>
+                    <field name="permitted_roles"/>
                     <!--<field name="controller_id"/>-->
                 </tree>
             </field>
         </record>
 
-        <!--        <record id="acs_controllers_zones_search_view" model="ir.ui.view">-->
-        <!--            <field name="name">access.acs_controllers_zones.search</field>-->
-        <!--            <field name="model">access.acs_controllers_zones</field>-->
-        <!--            <field name="arch" type="xml">-->
-        <!--                <search string="ModelTitle">-->
-        <!--                    <group expand="1" string="Group By">-->
-        <!--                        <filter string="Example Field" name="example_field" domain="[]"-->
-        <!--                                context="{'group_by':'example_field'}"/>-->
-        <!--                    </group>-->
-        <!--                </search>-->
-        <!--            </field>-->
-        <!--        </record>-->
-
+        <!--ACTION-->
         <record id="acs_zone_act_window" model="ir.actions.act_window">
             <field name="name">[ACTION] Access Control System: Zone</field>
             <field name="type">ir.actions.act_window</field>

@@ -9,7 +9,8 @@
     'website'     : 'https://qzhub.com',
     'license'     : 'AGPL-3',
     'depends'     : ["access_control_system"],
-    'data'        : ["data/call_mysql_job.xml"],
+    'data'        : ["data/call_mysql_job.xml",
+                     "views/hr_employee_views.xml"],
     'demo'        : [],
     'installable' : True,
     'auto_install': False
