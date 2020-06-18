@@ -31,26 +31,26 @@ class AttendanceAutomation(models.Model):
         return QUERY +_get_time_domain_for_event()
 
     def make_attendance(self, **kwargs):
-        print("make attendance")
+        _logger.warn("make attendance")
         reader_id = kwargs["reader_id"]
-        reader = self.env["acs.controller.reader"].search([["id", "=", reader_id]])
+        reader = self.env["acs.controller.reader"].search([["external_id", "=", reader_id]])
         employee_working_zone = self.env["hr.employee"].browse(kwargs["employee_id"])[0].work_place.ids
         if reader.to_zone_id in employee_working_zone:
-            print("ENTER")
+            _logger.warn("ENTER")
             data = {"employee_id": kwargs["employee_id"]}
             try:
                 self.env['hr.attendance'].create(data)
             except SystemError as e:
-                print(e, "has been detected")
+                _logger.warn(e, "has been detected")
         elif reader.from_zone_id in employee_working_zone:
-            print("EXIT")
+            _logger.warn("EXIT")
             data = {"check_out": kwargs["timelabel"]}
             try:
                 self.env["hr.attendance"].search([["employee_id", "=", kwargs["employee_id"]]], limit=1).write(data)
             except SystemError as e:
-                print(e, "has been detected")
+                _logger.warn(e, "has been detected")
         else:
-            print("Device with ID = %d has not been found in the system!"
+            _logger.warn("Device with ID = %d has not been found in the system!"
                   % (reader_id if reader_id is not None else 0))
 
     def search_employee_ids(self):

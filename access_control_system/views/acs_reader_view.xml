@@ -44,7 +44,7 @@
             <field name="name">[KANBAN VIEW] Access Control System: Reader</field>
             <field name="model">acs.controller.reader</field>
             <field name="arch" type="xml">
-                <kanban default_group_by="to_zone">
+                <kanban default_group_by="to_zone_name">
                     <field name="name"/>
                     <field name="from_zone_name"/>
                     <templates>
