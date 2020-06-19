@@ -40,7 +40,7 @@ class AttendanceAutomation(models.Model):
         try_to_access_zone = self.env["acs.zone"].search([["id", "=", reader.to_zone_id]])
         _logger.warn(employee)
         _logger.warn(try_to_access_zone)
-        _logger.warn(try_to_access_zone != False)
+        _logger.warn(try_to_access_zone != [])
         _logger.warn(employee.job_id)
         _logger.warn(try_to_access_zone.permitted_roles.ids)
         if try_to_access_zone != False:
