@@ -10,7 +10,8 @@
     'license'     : 'AGPL-3',
     'depends'     : ["access_control_system"],
     'data'        : ["data/call_mysql_job.xml",
-                     "views/hr_employee_views.xml"],
+                     "views/hr_employee_views.xml",
+                     "views/hr_attendance_view.xml"],
     'demo'        : [],
     'installable' : True,
     'auto_install': False
