@@ -68,7 +68,7 @@ class AttendanceAutomation(models.Model):
         try_to_access_zone = self.env["acs.zone"].search([["id", "=", reader.to_zone_id]])
         coming_from_zone = self.env["acs.zone"].search([["id", "=", reader.from_zone_id]])
         last_attendance = self.env['hr.attendance'].search([
-            ('employee_id', '=', self.employee_id.id),
+            ('employee_id', '=', employee.id),
         ], order='check_in desc', limit=1)
 
         # ============================== #
