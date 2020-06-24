@@ -4,7 +4,6 @@ from collections import defaultdict
 
 from odoo import api, fields, models
 
-
 _logger = logging.getLogger(__name__)
 
 
@@ -62,33 +61,38 @@ class AttendanceAutomation(models.Model):
     def make_attendance(self, **kwargs):
         _logger.warn("make attendance")
         reader_id = kwargs["reader_id"]
+        timelabel = kwargs["timelabel"]
         reader = self.env["acs.controller.reader"].search([["external_id", "=", reader_id]])
         employee = self.env["hr.employee"].browse(kwargs["employee_id"])[0]
 
         try_to_access_zone = self.env["acs.zone"].search([["id", "=", reader.to_zone_id]])
+        coming_from_zone = self.env["acs.zone"].search([["id", "=", reader.from_zone_id]])
+        last_attendance = self.env['hr.attendance'].search([
+            ('employee_id', '=', self.employee_id.id),
+        ], order='check_in desc', limit=1)
 
-        if try_to_access_zone.id != False:
+        # Rules
+        is_to_existing_place = (try_to_access_zone.id != False)
+        is_from_existing_place = (coming_from_zone.id != False)
+        is_accessing_child = (try_to_access_zone.parent_id.id == last_attendance.zone_id.id)
+        is_from_previous_zone = (last_attendance.zone_id.id == coming_from_zone.id)
+
+        if is_to_existing_place:
             if employee.job_id.id not in try_to_access_zone.permitted_roles.ids:
                 return (employee.name, try_to_access_zone.name)
 
-        if reader.to_zone_id in employee.work_place.ids:
-            _logger.warn("ENTER")
-            data = {"employee_id": employee.id,
-                    "zone_id" : self._get_zone_reference(try_to_access_zone.id)}
-            try:
-                self.env['hr.attendance'].create(data)
-            except SystemError as e:
-                _logger.warn(e, "has been detected")
-        elif reader.from_zone_id in employee.work_place.ids:
-            _logger.warn("EXIT")
-            data = {"check_out": kwargs["timelabel"]}
-            try:
-                self.env["hr.attendance"].search([["employee_id", "=", employee.id], ["zone_id", "=", "acs.zone,%d" % (try_to_access_zone.id)]], limit=1).write(data)
-            except SystemError as e:
-                _logger.warn(e, "has been detected")
-        else:
-            _logger.warn("Device with ID = %d has not been found in the system!"
-                         % (reader_id if reader_id is not None else 0))
+        if is_from_previous_zone:
+            if is_accessing_child:
+                data = {
+                    "employee_id": employee.id,
+                    "zone_id": try_to_access_zone.id
+                }
+                self.env["hr.attendance"].create(data)
+                _logger.warn("Checking into %s" % try_to_access_zone.nama)
+
+            elif not last_attendance.check_out:
+                last_attendance.write({"check_out": timelabel})
+                _logger.warn("Checking out from %s" % last_attendance.zone_id.name)
 
     def search_employee_ids(self):
         employees = self.env['hr.employee'].search([])
