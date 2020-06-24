@@ -96,7 +96,7 @@ class AttendanceAutomation(models.Model):
                 "zone_id": "acs.zone,%d" % try_to_access_zone.id
             }
             self.env["hr.attendance"].create(data)
-            _logger.warn("Checking into %s" % try_to_access_zone.nama)
+            _logger.warn("Checking into %s" % try_to_access_zone.name)
             pass
         # Handle for the people moving within parent zone
         if is_from_existing_place and is_from_previous_zone:
@@ -106,7 +106,7 @@ class AttendanceAutomation(models.Model):
                     "zone_id": try_to_access_zone.id
                 }
                 self.env["hr.attendance"].create(data)
-                _logger.warn("Checking into %s" % try_to_access_zone.nama)
+                _logger.warn("Checking into %s" % try_to_access_zone.name)
             elif not last_attendance.check_out:
                 last_attendance.write({"check_out": timelabel})
                 _logger.warn("Checking out from %s" % last_attendance.zone_id.name)
