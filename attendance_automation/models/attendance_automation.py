@@ -100,7 +100,7 @@ class AttendanceAutomation(models.Model):
             pass
         # Handle for the people moving within parent zone
         if is_from_existing_place and is_from_previous_zone:
-            if is_accessing_child:
+            if try_to_access_zone and is_accessing_child:
                 data = {
                     "employee_id": employee.id,
                     "zone_id": try_to_access_zone.id
