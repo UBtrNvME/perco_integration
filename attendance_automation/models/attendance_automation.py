@@ -71,14 +71,20 @@ class AttendanceAutomation(models.Model):
             ('employee_id', '=', self.employee_id.id),
         ], order='check_in desc', limit=1)
 
-        # Rules
-        _logger.warn("try_to_access_zone=%s\nlast_attendance=%s\ncoming_from_zone=%s" % (try_to_access_zone, last_attendance, coming_from_zone))
+        # ============================== #
+        #  Rules
+        # ============================== #
+        # --------------------------------------------------------------------------
+        _logger.warn("try_to_access_zone=%s"
+                     "\nlast_attendance=%s"
+                     "\ncoming_from_zone=%s"
+                     % (try_to_access_zone, last_attendance, coming_from_zone))
         is_to_existing_place = (try_to_access_zone.id != False)
         is_from_existing_place = (coming_from_zone.id != False)
         is_accessing_child = (try_to_access_zone.parent_id == last_attendance.zone_id)
         is_from_previous_zone = (last_attendance.zone_id == coming_from_zone)
         has_attendances = last_attendance
-
+        # --------------------------------------------------------------------------
         if is_to_existing_place:
             if employee.job_id.id not in try_to_access_zone.permitted_roles.ids:
                 return (employee.name, try_to_access_zone.name)
@@ -91,6 +97,7 @@ class AttendanceAutomation(models.Model):
             }
             self.env["hr.attendance"].create(data)
             _logger.warn("Checking into %s" % try_to_access_zone.nama)
+            pass
         # Handle for the people moving within parent zone
         if is_from_existing_place and is_from_previous_zone:
             if is_accessing_child:
@@ -100,10 +107,10 @@ class AttendanceAutomation(models.Model):
                 }
                 self.env["hr.attendance"].create(data)
                 _logger.warn("Checking into %s" % try_to_access_zone.nama)
-
             elif not last_attendance.check_out:
                 last_attendance.write({"check_out": timelabel})
                 _logger.warn("Checking out from %s" % last_attendance.zone_id.name)
+            pass
 
     def search_employee_ids(self):
         employees = self.env['hr.employee'].search([])
