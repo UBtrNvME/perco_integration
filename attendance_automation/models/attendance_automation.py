@@ -72,16 +72,17 @@ class AttendanceAutomation(models.Model):
         ], order='check_in desc', limit=1)
 
         # Rules
+        _logger.warn("try_to_access_zone=%s\nlast_attendance=%s\ncoming_from_zone=%s" % (try_to_access_zone, last_attendance, coming_from_zone))
         is_to_existing_place = (try_to_access_zone.id != False)
         is_from_existing_place = (coming_from_zone.id != False)
-        is_accessing_child = (try_to_access_zone.parent_id.id == last_attendance.zone_id.id)
-        is_from_previous_zone = (last_attendance.zone_id.id == coming_from_zone.id)
+        is_accessing_child = (try_to_access_zone.parent_id == last_attendance.zone_id)
+        is_from_previous_zone = (last_attendance.zone_id == coming_from_zone)
 
         if is_to_existing_place:
             if employee.job_id.id not in try_to_access_zone.permitted_roles.ids:
                 return (employee.name, try_to_access_zone.name)
 
-        if is_from_previous_zone:
+        if is_from_existing_place and is_from_previous_zone:
             if is_accessing_child:
                 data = {
                     "employee_id": employee.id,
