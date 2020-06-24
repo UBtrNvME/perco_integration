@@ -108,7 +108,7 @@ class AttendanceAutomation(models.Model):
                 self.env["hr.attendance"].create(data)
                 _logger.warn("Checking into %s" % try_to_access_zone.name)
             elif not last_attendance.check_out:
-                last_attendance.write({"check_out": timelabel}):
+                last_attendance.write({"check_out": timelabel})
                 _logger.warn("Checking out from %s" % last_attendance.zone_id.name)
             pass
 
