@@ -13,6 +13,24 @@ class AttendanceAutomation(models.Model):
 
     zone_id = fields.Reference(string="Zone Reference", selection="_selection_target_model")
 
+    @api.constrains('check_in', 'check_out', 'employee_id')
+    def _check_validity(self):
+        """ Overriden method from hr_attendance base model, which cancels constaints for the attendances within child zones """
+        for attendance in self:
+            last_attendance_before_check_in = self.env['hr.attendance'].search([
+                ('employee_id', '=', attendance.employee_id.id),
+                ('check_in', '<=', attendance.check_in),
+                ('id', '!=', attendance.id),
+            ], order='check_in desc', limit=1)
+            if last_attendance_before_check_in:
+                last_attendance_zone_id = last_attendance_before_check_in.zone_id
+                attendance_zone_id = attendance.zone_id
+                print(f"last_attendance_zone_id={last_attendance_zone_id}\nattendance_zone_id={attendance_zone_id}")
+                if attendance_zone_id.parent_id and attendance_zone_id.parent_id == last_attendance_zone_id:
+                    pass
+                else:
+                    super()._check_validity()
+
     def _selection_target_model(self):
         model = self.env['ir.model'].search([('model', '=', 'acs.zone')])
         return [(model.model, model.name)]
@@ -65,7 +83,7 @@ class AttendanceAutomation(models.Model):
             _logger.warn("EXIT")
             data = {"check_out": kwargs["timelabel"]}
             try:
-                self.env["hr.attendance"].search([["employee_id", "=", employee.id]], limit=1).write(data)
+                self.env["hr.attendance"].search([["employee_id", "=", employee.id], ["zone_id", "=", "acs.zone,%d" % (try_to_access_zone.id)]], limit=1).write(data)
             except SystemError as e:
                 _logger.warn(e, "has been detected")
         else:
