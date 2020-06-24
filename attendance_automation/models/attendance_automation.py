@@ -93,7 +93,7 @@ class AttendanceAutomation(models.Model):
         if not has_attendances or not is_from_existing_place:
             data = {
                 "employee_id": employee.id,
-                "zone_id": try_to_access_zone.id
+                "zone_id": "acs.zone,%d" % try_to_access_zone.id
             }
             self.env["hr.attendance"].create(data)
             _logger.warn("Checking into %s" % try_to_access_zone.nama)
