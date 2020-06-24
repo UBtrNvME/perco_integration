@@ -24,7 +24,7 @@ class AttendanceAutomation(models.Model):
             if last_attendance_before_check_in:
                 last_attendance_zone_id = last_attendance_before_check_in.zone_id
                 attendance_zone_id = attendance.zone_id
-                print(f"last_attendance_zone_id={last_attendance_zone_id}\nattendance_zone_id={attendance_zone_id}")
+                _logger.warn(f"last_attendance_zone_id={last_attendance_zone_id}\nattendance_zone_id={attendance_zone_id}")
                 if attendance_zone_id.parent_id and attendance_zone_id.parent_id == last_attendance_zone_id:
                     pass
                 else:
