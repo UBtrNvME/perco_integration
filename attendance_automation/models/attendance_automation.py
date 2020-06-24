@@ -24,7 +24,7 @@ class AttendanceAutomation(models.Model):
             if last_attendance_before_check_in:
                 last_attendance_zone_id = last_attendance_before_check_in.zone_id
                 attendance_zone_id = attendance.zone_id
-                print(f"last_attendance_zone_id={last_attendance_zone_id}\nattendance_zone_id={attendance_zone_id}")
+                _logger.warn(f"last_attendance_zone_id={last_attendance_zone_id}\nattendance_zone_id={attendance_zone_id}")
                 if attendance_zone_id.parent_id and attendance_zone_id.parent_id == last_attendance_zone_id:
                     pass
                 else:
@@ -68,31 +68,49 @@ class AttendanceAutomation(models.Model):
         try_to_access_zone = self.env["acs.zone"].search([["id", "=", reader.to_zone_id]])
         coming_from_zone = self.env["acs.zone"].search([["id", "=", reader.from_zone_id]])
         last_attendance = self.env['hr.attendance'].search([
-            ('employee_id', '=', self.employee_id.id),
+            ('employee_id', '=', employee.id),
         ], order='check_in desc', limit=1)
 
-        # Rules
+        # ============================== #
+        #  Rules
+        # ============================== #
+        # --------------------------------------------------------------------------
+        _logger.warn("try_to_access_zone=%s"
+                     "\nlast_attendance=%s"
+                     "\ncoming_from_zone=%s"
+                     % (try_to_access_zone, last_attendance, coming_from_zone))
         is_to_existing_place = (try_to_access_zone.id != False)
         is_from_existing_place = (coming_from_zone.id != False)
-        is_accessing_child = (try_to_access_zone.parent_id.id == last_attendance.zone_id.id)
-        is_from_previous_zone = (last_attendance.zone_id.id == coming_from_zone.id)
-
+        is_accessing_child = try_to_access_zone and (try_to_access_zone.parent_id == last_attendance.zone_id)
+        is_from_previous_zone = (last_attendance.zone_id == coming_from_zone)
+        has_attendances = last_attendance
+        # --------------------------------------------------------------------------
         if is_to_existing_place:
             if employee.job_id.id not in try_to_access_zone.permitted_roles.ids:
                 return (employee.name, try_to_access_zone.name)
 
-        if is_from_previous_zone:
-            if is_accessing_child:
+        # Handle for the people who has no previous attendance or coming from outside
+        if not has_attendances or not is_from_existing_place:
+            data = {
+                "employee_id": employee.id,
+                "zone_id": "acs.zone,%d" % try_to_access_zone.id
+            }
+            self.env["hr.attendance"].create(data)
+            _logger.warn("Checking into %s" % try_to_access_zone.name)
+            pass
+        # Handle for the people moving within parent zone
+        if is_from_existing_place and is_from_previous_zone:
+            if try_to_access_zone and is_accessing_child:
                 data = {
                     "employee_id": employee.id,
-                    "zone_id": try_to_access_zone.id
+                    "zone_id": "acs.zone,%d" % try_to_access_zone.id
                 }
                 self.env["hr.attendance"].create(data)
-                _logger.warn("Checking into %s" % try_to_access_zone.nama)
-
+                _logger.warn("Checking into %s" % try_to_access_zone.name)
             elif not last_attendance.check_out:
                 last_attendance.write({"check_out": timelabel})
                 _logger.warn("Checking out from %s" % last_attendance.zone_id.name)
+            pass
 
     def search_employee_ids(self):
         employees = self.env['hr.employee'].search([])
