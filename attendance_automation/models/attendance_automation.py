@@ -77,11 +77,21 @@ class AttendanceAutomation(models.Model):
         is_from_existing_place = (coming_from_zone.id != False)
         is_accessing_child = (try_to_access_zone.parent_id == last_attendance.zone_id)
         is_from_previous_zone = (last_attendance.zone_id == coming_from_zone)
+        has_attendances = last_attendance
 
         if is_to_existing_place:
             if employee.job_id.id not in try_to_access_zone.permitted_roles.ids:
                 return (employee.name, try_to_access_zone.name)
 
+        # Handle for the people who has no previous attendance or coming from outside
+        if not has_attendances or not is_from_existing_place:
+            data = {
+                "employee_id": employee.id,
+                "zone_id": try_to_access_zone.id
+            }
+            self.env["hr.attendance"].create(data)
+            _logger.warn("Checking into %s" % try_to_access_zone.nama)
+        # Handle for the people moving within parent zone
         if is_from_existing_place and is_from_previous_zone:
             if is_accessing_child:
                 data = {
