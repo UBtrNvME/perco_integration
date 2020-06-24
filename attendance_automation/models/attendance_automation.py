@@ -81,7 +81,7 @@ class AttendanceAutomation(models.Model):
                      % (try_to_access_zone, last_attendance, coming_from_zone))
         is_to_existing_place = (try_to_access_zone.id != False)
         is_from_existing_place = (coming_from_zone.id != False)
-        is_accessing_child = (try_to_access_zone.parent_id == last_attendance.zone_id)
+        is_accessing_child = try_to_access_zone and (try_to_access_zone.parent_id == last_attendance.zone_id)
         is_from_previous_zone = (last_attendance.zone_id == coming_from_zone)
         has_attendances = last_attendance
         # --------------------------------------------------------------------------
