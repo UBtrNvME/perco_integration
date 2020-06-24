@@ -142,78 +142,75 @@ class AttendanceAutomation(models.Model):
     @api.model
     def cron_job(self, data):
         _logger.warn("Cron have started!!")
-        if datetime.datetime.now() > datetime.datetime.now().replace(hour=0, minute=0, second=0) \
-                and datetime.datetime.now() < datetime.datetime.now().replace(hour=16, minute=0, second=0):
 
-            # date = datetime.date.today()
-            # array = [[str(date) + " 00:00:00", str(date) + " 03:00:00"],
-            #          [str(date) + " 03:00:00", str(date) + " 07:00:00"],
-            #          [str(date) + " 07:00:00", str(date) + " 08:00:00"],
-            #          [str(date) + " 08:00:00", str(date) + " 12:00:00"]]
+        mysql = self.env["mysql.connector"].search([["id", "=", data]])
+        _logger.warn(mysql)
+        if not mysql:
+            pass
 
-            # domain = [str(data[0]), str(data[1]), str(data[2])]
-            mysql = self.env["mysql.connector"].search([["id", "=", data]])
-            _logger.warn(mysql)
-            if mysql:
-                mysql.establish_connection()
-                odoo_attendances = self.sort_odoo_records(self.env["hr.attendance"].search(
-                    ["|",
-                     "&", ("check_in", "<=", datetime.datetime.now()), ("check_in", ">=", mysql.pivot_time),
-                     "&", ("check_out", "<=", datetime.datetime.now()), ("check_out", ">=", mysql.pivot_time)]
-                ))
-                mysql_attendances = self.sort_mysql_records(
-                    mysql.execute_query(self.generate_query_body_for_event())
-                )
-                _logger.warn("ODOO ATTENDANCES:")
-                _logger.warn(odoo_attendances)
-                _logger.warn("MYSQL ATTENDANCES:")
-                _logger.warn(mysql_attendances)
-                if mysql_attendances != {}:
-                    _logger.warn("Starting searching!!!")
-                    for employee in mysql_attendances:
-                        employee_id = self.get_employee_id(employee)
-                        _logger.warn("Employee id: %s" % (employee_id))
-                        try:
-                            _logger.warn("length of the record: %s" % len(mysql_attendances[employee]))
-                            if len(mysql_attendances[employee]) % 2 != 0:
-                                this_employee_attendances = {}
-                                valid_attendance_id = min(mysql_attendances[employee], key=int)
-                                current_attendance = mysql_attendances[employee][valid_attendance_id]
-                                if employee_id in odoo_attendances:
-                                    this_employee_attendances = odoo_attendances.pop(employee_id)
-                                else:
-                                    _logger.warn("Creating Attendance")
-                                    info = self.make_attendance(reader_id=current_attendance[1],
-                                                                employee_id=employee_id,
-                                                                timelabel=current_attendance[0])
-                                    if info:
-                                        _logger.warn(
-                                            "Following user, %s, tried to access %s, without permission!" % (info))
-                                    continue
-                                _logger.warn("This employee attendance:")
-                                _logger.warn(this_employee_attendances)
-                                latest_attendance_id = max(this_employee_attendances, key=int)
-                                latest_attendance = this_employee_attendances[latest_attendance_id]
+        mysql.establish_connection()
+        mysql_attendances = self.sort_mysql_records(
+            mysql.execute_query(self.generate_query_body_for_event())
+        )
 
-                                _logger.warn("\ncurrent-attendance: %s\nlatest-attendance: %s" % (
-                                    current_attendance, latest_attendance))
-                                if latest_attendance[1] == False and current_attendance[0] - latest_attendance[
-                                    0] >= datetime.timedelta(minutes=1):
-                                    _logger.warn("Creating Attendance")
-                                    info = self.make_attendance(reader_id=current_attendance[1],
-                                                                employee_id=employee_id,
-                                                                timelabel=current_attendance[0])
-                                    if info:
-                                        _logger.warn(
-                                            "Following user, %s, tried to access %s, without permission!" % (info))
+        if mysql_attendances == {}:
+            pass
 
-                                else:
-                                    _logger.warn("Creating Attendance")
-                                    info = self.make_attendance(reader_id=current_attendance[1],
-                                                                employee_id=employee_id,
-                                                                timelabel=current_attendance[0])
-                                    if info:
-                                        _logger.warn(
-                                            "Following user, %s, tried to access %s, without permission!" % (info))
-                        except:
-                            _logger.warn("Problems with following Employee")
+        odoo_attendances = self.sort_odoo_records(self.env["hr.attendance"].search(
+            ["|",
+             "&", ("check_in", "<=", datetime.datetime.now()), ("check_in", ">=", mysql.pivot_time),
+             "&", ("check_out", "<=", datetime.datetime.now()), ("check_out", ">=", mysql.pivot_time)]
+        ))
+        _logger.warn("ODOO ATTENDANCES:")
+        _logger.warn(odoo_attendances)
+        _logger.warn("MYSQL ATTENDANCES:")
+        _logger.warn(mysql_attendances)
+        if mysql_attendances != {}:
+            _logger.warn("Starting searching!!!")
+            for employee in mysql_attendances:
+                employee_id = self.get_employee_id(employee)
+                _logger.warn("Employee id: %s" % (employee_id))
+                try:
+                    _logger.warn("length of the record: %s" % len(mysql_attendances[employee]))
+                    if len(mysql_attendances[employee]) % 2 != 0:
+                        this_employee_attendances = {}
+                        valid_attendance_id = min(mysql_attendances[employee], key=int)
+                        current_attendance = mysql_attendances[employee][valid_attendance_id]
+                        if employee_id in odoo_attendances:
+                            this_employee_attendances = odoo_attendances.pop(employee_id)
+                        else:
+                            _logger.warn("Creating Attendance")
+                            info = self.make_attendance(reader_id=current_attendance[1],
+                                                        employee_id=employee_id,
+                                                        timelabel=current_attendance[0])
+                            if info:
+                                _logger.warn(
+                                    "Following user, %s, tried to access %s, without permission!" % (info))
+                            continue
+                        _logger.warn("This employee attendance:")
+                        _logger.warn(this_employee_attendances)
+                        latest_attendance_id = max(this_employee_attendances, key=int)
+                        latest_attendance = this_employee_attendances[latest_attendance_id]
+
+                        _logger.warn("\ncurrent-attendance: %s\nlatest-attendance: %s" % (
+                            current_attendance, latest_attendance))
+                        if latest_attendance[1] == False and current_attendance[0] - latest_attendance[
+                            0] >= datetime.timedelta(minutes=1):
+                            _logger.warn("Creating Attendance")
+                            info = self.make_attendance(reader_id=current_attendance[1],
+                                                        employee_id=employee_id,
+                                                        timelabel=current_attendance[0])
+                            if info:
+                                _logger.warn(
+                                    "Following user, %s, tried to access %s, without permission!" % (info))
+
+                        else:
+                            _logger.warn("Creating Attendance")
+                            info = self.make_attendance(reader_id=current_attendance[1],
+                                                        employee_id=employee_id,
+                                                        timelabel=current_attendance[0])
+                            if info:
+                                _logger.warn(
+                                    "Following user, %s, tried to access %s, without permission!" % (info))
+                except:
+                    _logger.warn("Problems with following Employee")
