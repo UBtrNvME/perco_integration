@@ -31,7 +31,6 @@ class Zone(models.Model):
             'domain'   : [('controller_id', '=', self.controller_id.id)],
             'context'  : {'default_controller_id': self.controller_id.id},
             'flags'    : {'action_buttons': True},
-            # 'group_by' : "to_zone"
         }
 
     @api.model
