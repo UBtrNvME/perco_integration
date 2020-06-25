@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class AttendanceAutomation(models.Model):
     _inherit = "hr.attendance"
 
-    zone_id = fields.Reference(string="Zone Reference", selection="_selection_target_model")
+    zone_id = fields.Reference(string="Zone Reference", selection=[('acs.zone', "Access Zone")])
 
     @api.constrains('check_in', 'check_out', 'employee_id')
     def _check_validity(self):
@@ -30,9 +30,6 @@ class AttendanceAutomation(models.Model):
                 else:
                     super()._check_validity()
 
-    def _selection_target_model(self):
-        model = self.env['ir.model'].search([('model', '=', 'acs.zone')])
-        return [(model.model, model.name)]
 
     @staticmethod
     def _get_zone_reference(id):
