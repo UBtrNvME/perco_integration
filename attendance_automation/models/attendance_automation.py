@@ -29,7 +29,7 @@ class AttendanceAutomation(models.Model):
             #         pass
             #     else:
             #         super()._check_validity()
-            pass
+        pass
 
 
     @staticmethod
