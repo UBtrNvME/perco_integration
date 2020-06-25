@@ -119,7 +119,8 @@ class AttendanceAutomation(models.Model):
                 pass
             elif not last_attendance.check_out:
                 _logger.warn("Updating Attendance! TIMELABEL=%s" % (timelabel))
-                last_attendance.write({"check_out": timelabel})
+
+                last_attendance.check_out = timelabel
                 _logger.warn("Checking out from %s" % last_attendance.zone_id.name)
                 pass
 
