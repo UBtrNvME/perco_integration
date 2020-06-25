@@ -66,7 +66,11 @@ class AttendanceAutomation(models.Model):
         coming_from_zone = self.env["acs.zone"].search([["id", "=", reader.from_zone_id]])
         last_attendance = self.env['hr.attendance'].search([
             ('employee_id', '=', employee.id),
+            ('check_out', '=', False)
+        ], order='check_in desc', limit=1) if True else self.env['hr.attendance'].search([
+            ('employee_id', '=', employee.id),
         ], order='check_in desc', limit=1)
+
 
         # ============================== #
         #  Rules
