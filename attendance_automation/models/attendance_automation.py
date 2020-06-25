@@ -85,6 +85,13 @@ class AttendanceAutomation(models.Model):
         is_accessing_child = try_to_access_zone and (try_to_access_zone.parent_id == last_attendance.zone_id)
         is_from_previous_zone = (last_attendance.zone_id == coming_from_zone)
         has_attendances = last_attendance
+
+        _logger.warn("\nis_to_existing_place=%s"
+                     "\nis_from_existing_place=%s"
+                     "\nis_accessing_child=%s"
+                     "\nis_from_previous_zone=%s"
+                     "\nhas_attendances=%s"
+                     % (is_to_existing_place,is_from_existing_place,is_accessing_child,is_from_previous_zone,has_attendances))
         # --------------------------------------------------------------------------
         if is_to_existing_place:
             if employee.job_id.id not in try_to_access_zone.permitted_roles.ids:
