@@ -109,17 +109,20 @@ class AttendanceAutomation(models.Model):
         # Handle for the people moving within parent zone
         if is_from_existing_place and is_from_previous_zone:
             if try_to_access_zone and is_accessing_child:
+                _logger.warn("Creating Attendance! TIMELABEL=%s" % (timelabel))
                 data = {
                     "employee_id": employee.id,
                     "zone_id": "acs.zone,%d" % try_to_access_zone.id
                 }
                 self.env["hr.attendance"].create(data)
                 _logger.warn("Checking into %s" % try_to_access_zone.name)
+                pass
             elif not last_attendance.check_out:
-                _logger.warn("Im here! TIMELABEL=%s" % (timelabel))
+                _logger.warn("Updating Attendance! TIMELABEL=%s" % (timelabel))
                 last_attendance.write({"check_out": timelabel})
                 _logger.warn("Checking out from %s" % last_attendance.zone_id.name)
-            pass
+                pass
+
 
     def search_employee_ids(self):
         employees = self.env['hr.employee'].search([])
