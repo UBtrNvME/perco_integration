@@ -15,20 +15,21 @@ class AttendanceAutomation(models.Model):
     @api.constrains('check_in', 'check_out', 'employee_id')
     def _check_validity(self):
         """ Overriden method from hr_attendance base model, which cancels constaints for the attendances within child zones """
-        for attendance in self:
-            last_attendance_before_check_in = self.env['hr.attendance'].search([
-                ('employee_id', '=', attendance.employee_id.id),
-                ('check_in', '<=', attendance.check_in),
-                ('id', '!=', attendance.id),
-            ], order='check_in desc', limit=1)
-            if last_attendance_before_check_in:
-                last_attendance_zone_id = last_attendance_before_check_in.zone_id
-                attendance_zone_id = attendance.zone_id
-                _logger.warn(f"last_attendance_zone_id={last_attendance_zone_id}\nattendance_zone_id={attendance_zone_id}")
-                if attendance_zone_id.parent_id and attendance_zone_id.parent_id == last_attendance_zone_id:
-                    pass
-                else:
-                    super()._check_validity()
+        # for attendance in self:
+            # last_attendance_before_check_in = self.env['hr.attendance'].search([
+            #     ('employee_id', '=', attendance.employee_id.id),
+            #     ('check_in', '<=', attendance.check_in),
+            #     ('id', '!=', attendance.id),
+            # ], order='check_in desc', limit=1)
+            # if last_attendance_before_check_in:
+            #     last_attendance_zone_id = last_attendance_before_check_in.zone_id
+            #     attendance_zone_id = attendance.zone_id
+            #     _logger.warn(f"last_attendance_zone_id={last_attendance_zone_id}\nattendance_zone_id={attendance_zone_id}")
+            #     if attendance_zone_id.parent_id and attendance_zone_id.parent_id == last_attendance_zone_id:
+            #         pass
+            #     else:
+            #         super()._check_validity()
+            pass
 
 
     @staticmethod
