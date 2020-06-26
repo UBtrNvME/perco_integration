@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 
 from odoo import api, fields, models
 
@@ -17,20 +18,25 @@ class Employee(models.Model):
         print("im here")
         date_now = fields.Date.today()
         print(date_now)
-        time_to_attend = datetime(year=date_now.year, month=date_now.month, day=date_now.day, hour=3, minute=0,
-                                  second=0)
-        time_today = datetime(year=date_now.year, month=date_now.month, day=date_now.day - 1, hour=18, minute=0,
-                              second=0)
+        time_to_attend = (datetime(year=date_now.year, month=date_now.month, day=date_now.day, hour=9, minute=0,
+                                  second=0)).strftime("%Y-%m-%d %H:%M:%S")
+        time_today = (datetime(year=date_now.year, month=date_now.month, day=date_now.day, hour=0, minute=0,
+                              second=0)).strftime("%Y-%m-%d %H:%M:%S")
         late_employee_ids = []
-        print(time_to_attend, late_employee_ids)
+        print(time_to_attend, time_today,late_employee_ids)
         employees = self.env["hr.employee"].search([])
         print(employees.ids)
         for employee in employees.ids:
             print(employee)
             todays_first_employee_attendance_before_time_to_attend = self.env["hr.attendance"].search(
-                [["id", "=", employee], ["check_in", "<=", time_to_attend], ["check_in", ">", time_today]], limit=1, order="check_in")
+                [["id", "=", employee],
+                 "&",
+                 ["check_in", "<=", time_to_attend],
+                 ["check_in", ">", time_today]
+                 ],
+                limit=1)
             print(todays_first_employee_attendance_before_time_to_attend)
-            if not todays_first_employee_attendance_before_time_to_attend:
+            if not todays_first_employee_attendance_before_time_to_attend.id:
                 late_employee_ids.append(employee)
                 print(late_employee_ids)
 
