@@ -19,9 +19,9 @@ class Employee(models.Model):
         date_now = fields.Date.today()
         print(date_now)
         time_to_attend = (datetime(year=date_now.year, month=date_now.month, day=date_now.day, hour=9, minute=0,
-                                  second=0)).strftime("%Y-%m-%d %H:%M:%S")
+                                  second=0)-timedelta(hours=6)).strftime("%Y-%m-%d %H:%M:%S")
         time_today = (datetime(year=date_now.year, month=date_now.month, day=date_now.day, hour=0, minute=0,
-                              second=0)).strftime("%Y-%m-%d %H:%M:%S")
+                              second=0)-timedelta(hours=6)).strftime("%Y-%m-%d %H:%M:%S")
         late_employee_ids = []
         print(time_to_attend, time_today,late_employee_ids)
         employees = self.env["hr.employee"].search([])
