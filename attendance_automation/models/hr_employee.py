@@ -29,8 +29,7 @@ class Employee(models.Model):
         for employee in employees.ids:
             print(employee)
             todays_first_employee_attendance_before_time_to_attend = self.env["hr.attendance"].search(
-                [["id", "=", employee],
-                 "&",
+                [["employee_id", "=", employee],
                  ["check_in", "<=", time_to_attend],
                  ["check_in", ">", time_today]
                  ],
