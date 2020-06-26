@@ -13,5 +13,16 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="show_late_employees_action" model="ir.actions.server">
+            <field name="name">Late Employees</field>
+            <field name="model_id" ref="attendance_automation.model_hr_employee"/>
+            <field name="state">code</field>
+            <field name="code">action = model.sort_employee_by()</field>
+        </record>
+
+        <menuitem name="Late Employees" id="late_employees_action"
+                  parent="hr_attendance.menu_hr_attendance_manage_attendances"
+                  action="show_late_employees_action"/>
     </data>
 </odoo>
