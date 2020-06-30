@@ -21,6 +21,25 @@
 
             </field>
         </record>
+        <record id="hr_employee_tree_view_inherited" model="ir.ui.view">
+            <field name="name">hr.employee.view.inherited</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//page[last()]" position="after">
+                    <page name="zone_settings" string="Zone Settings">
+                        <div>
+                            <label for="work_place"/>
+                            <br></br>
+                            <field name="work_place"/>
+                        </div>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
 
     </data>
 </odoo>
