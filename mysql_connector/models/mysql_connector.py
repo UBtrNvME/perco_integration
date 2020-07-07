@@ -1,9 +1,11 @@
-from odoo import fields, api, models
-import mysql.connector
 import datetime
-from mysql.connector import Error
-from odoo.osv import osv
 import logging
+
+import mysql.connector
+from mysql.connector import Error
+
+from odoo import api, fields, models
+from odoo.osv import osv
 
 
 _logger = logging.getLogger(__name__)
@@ -84,14 +86,6 @@ class MysqlConnector(models.Model):
             is_valid = False
         finally:
             return is_valid
-
-    # def close_connection(self):
-    #     for mc in self:
-    #         try:
-    #             mc.cursor.close()
-    #             mc.connection.disconnect()
-    #         except:
-    #             pass
 
     @api.model
     def create(self, values):
