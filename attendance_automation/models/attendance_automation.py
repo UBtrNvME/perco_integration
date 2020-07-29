@@ -178,7 +178,7 @@ class AttendanceAutomation(models.Model):
         mysql = self.env["mysql.connector"].search([["id", "=", data]])
         _logger.warn(mysql)
         if not mysql:
-            pass
+            return
 
         mysql.establish_connection()
         mysql_attendances = self.sort_mysql_records(
@@ -186,7 +186,7 @@ class AttendanceAutomation(models.Model):
         )
 
         if mysql_attendances == {}:
-            pass
+            return
 
         odoo_attendances = self.sort_odoo_records(self.env["hr.attendance"].search(
             ["|",
